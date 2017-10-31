@@ -57,8 +57,3 @@ GA_ACTION_ANNOTATION_POST = 'human_ppi_post'
 GA_TRACKER_URL = 'MyHuman_Ppi.info'
 
 STATUS_CHECK_ID = ''
-
-# *****************************************************************************
-# Datafile location to load into ElasticSearch
-# *****************************************************************************
-HUMAN_PPI_DATAFILE = 'data/ConsensusPathDB_human_PPI.tsv'

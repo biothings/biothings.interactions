@@ -2,7 +2,7 @@
 import json
 import unittest
 
-from src.web.api.transform import ESResultTransformer
+from src.www.api.transform import ESResultTransformer
 
 
 class TestStringMethods(unittest.TestCase):

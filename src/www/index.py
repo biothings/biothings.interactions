@@ -4,7 +4,7 @@ from biothings.web.index_base import main, options
 from www.settings import MyHuman_PpiWebSettings
 
 # Instantiate settings class to configure biothings web
-web_settings = MyHuman_PpiWebSettings(config='config')
+web_settings = MyHuman_PpiWebSettings(config='config_www')
 
 if __name__ == '__main__':
     # set debug level on app settings

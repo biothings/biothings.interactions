@@ -17,7 +17,7 @@ from biothings.utils.es import ESIndexer
 # *****************************************************************************
 # Settings
 # *****************************************************************************
-web_settings = MyHuman_PpiWebSettings(config='config')
+web_settings = MyHuman_PpiWebSettings(config='config_www')
 # Instantiate settings class to read the ES index and document names
 
 

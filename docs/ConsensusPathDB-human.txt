@@ -45,3 +45,4 @@ http://cpdb.molgen.mpg.de/download/ConsensusPathDB_human_PPI.gz
 
 cd <human_ppi_location>/src
 python dataload/build_index.py <path_to_file>/ConsensusPathDB_human_PPI>
+python hub/dataload/sources/ConsensusPathDB/dataload.py ../data/ConsensusPathDB_human_PPI

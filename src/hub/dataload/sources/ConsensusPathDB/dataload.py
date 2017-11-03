@@ -12,6 +12,7 @@ import sys
 from biothings.web.index_base import options
 from www.settings import MyHuman_PpiWebSettings
 from biothings.utils.es import ESIndexer
+from hub.dataload.sources.ConsensusPathDB.parser import parse_ConsensusPathDB
 
 
 # *****************************************************************************
@@ -27,32 +28,6 @@ web_settings = MyHuman_PpiWebSettings(config='config_www')
 # Setup the logger for the Script
 logging.basicConfig()
 logger = logging.getLogger()
-
-
-# *****************************************************************************
-# load_data
-# *****************************************************************************
-# load_data parses the ConsensusPathDB_human_PPI data file and yields
-# a generated dictionary of line values.
-def load_data(f):
-    for (i, line) in enumerate(f):
-        line = line.strip('\n')
-
-        # The first commented line is the database description
-
-        # The second commented line contains the column headers
-        if i == 1:
-            line = line.replace("#  ", '')  # Delete the comment prefix
-            header_dict = dict([(p, re.sub(r'\s', '_', h.lower())) for (p, h) in enumerate(line.split('\t'))])
-            print(header_dict)
-
-        # All subsequent lines contain row data
-        elif i > 1:
-            _r = {}
-            for (pos, val) in enumerate(line.split('\t')):
-                if val:
-                    _r[header_dict[pos]] = val if '","' not in val else val.strip('"').split('","')
-            yield _r
 
 
 # *****************************************************************************
@@ -73,14 +48,20 @@ if not os.path.isfile(human_ppi_datafile):
     exit()
 
 # *****************************************************************************
+# Biothings uploader - upload data from the file into MongoDB
+# *****************************************************************************
+consensus_uploader = uploader.ConsensusPathDBUploader()
+consensus_uploader.load_data("../data/")
+
+# *****************************************************************************
 # Index the target data file
 # *****************************************************************************
-try:
-    indexer = ESIndexer(index=web_settings.ES_INDEX, doc_type=web_settings.ES_DOC_TYPE, es_host=web_settings.ES_HOST)
-    indexer.create_index(mapping={web_settings.ES_DOC_TYPE: {'dynamic': True}})
-    with open(human_ppi_datafile, 'r') as gene_file:
-        indexer.index_bulk(load_data(gene_file))
-        logger.info("The ElasticSearch Indexer loaded {} entries.".format(indexer.count()))
-
-except UnboundLocalError:
-        logger.error("An error occurred likely related to the column headers in the file.".format(human_ppi_datafile))
+# try:
+#     indexer = ESIndexer(index=web_settings.ES_INDEX, doc_type=web_settings.ES_DOC_TYPE, es_host=web_settings.ES_HOST)
+#     indexer.create_index(mapping={web_settings.ES_DOC_TYPE: {'dynamic': True}})
+#     with open(human_ppi_datafile, 'r') as gene_file:
+#         indexer.index_bulk(parse_ConsensusPathDB(gene_file))
+#         logger.info("The ElasticSearch Indexer loaded {} entries.".format(indexer.count()))
+#
+# except UnboundLocalError:
+#         logger.error("An error occurred likely related to the column headers in the file.".format(human_ppi_datafile))

@@ -103,3 +103,6 @@ ENV/
 # PyCharm
 .idea/
 
+# Biothings.interactions data files
+data/*
+

@@ -37,8 +37,9 @@ loop.set_default_executor(process_queue)
 job_manager = JobManager(loop,
                          max_memory_usage=config_hub.HUB_MAX_MEM_USAGE)
 
-import hub
-from hub import dataload
+from hub.dataload import __sources_dict__ as dataload_sources
+
+# from hub import dataload
 import biothings.hub.dataload.dumper as dumper
 import biothings.hub.dataload.uploader as uploader
 import biothings.hub.databuild.differ as differ
@@ -48,13 +49,16 @@ import biothings.hub.databuild.syncer as syncer
 # from hub.databuild.mapper import EntrezRetired2Current, Ensembl2Entrez
 # from hub.dataindex.indexer import GeneIndexer
 
+# Check the sources dictionary
+print(dataload_sources)
+
 # will check every 10 seconds for sources to upload
 upload_manager = uploader.UploaderManager(poll_schedule = '* * * * * */10', job_manager=job_manager)
-upload_manager.register_sources(hub.dataload.__sources_dict__)
+upload_manager.register_sources(dataload_sources)
 upload_manager.poll('upload', lambda doc: upload_manager.upload_src(doc["_id"]))
 
 dmanager = dumper.DumperManager(job_manager=job_manager)
-dmanager.register_sources(hub.dataload.__sources_dict__)
+dmanager.register_sources(dataload_sources)
 dmanager.schedule_all()
 
 # retired2current = EntrezRetired2Current(convert_func=int,db_provider=mongo.get_src_db)

@@ -1,6 +1,9 @@
 import os
-import biothings.hub.dataload.uploader as uploader
 
+import biothings, config_hub
+biothings.config_for_app(config_hub)
+
+import biothings.hub.dataload.uploader as uploader
 from .parser import parse_ConsensusPathDB
 
 

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # Simple template example used to instantiate a new biothing API
 from biothings.web.index_base import main, options
-from www.settings import MyHuman_PpiWebSettings
+from www.settings import BiothingsInteractionsWebSettings
 
 # Instantiate settings class to configure biothings web
-web_settings = MyHuman_PpiWebSettings(config='config_www')
+web_settings = BiothingsInteractionsWebSettings(config='config_www')
 
 if __name__ == '__main__':
     # set debug level on app settings

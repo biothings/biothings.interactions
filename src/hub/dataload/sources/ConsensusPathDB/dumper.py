@@ -9,7 +9,7 @@ class ConsensusPathDBDumper(LastModifiedHTTPDumper):
 
     SRC_NAME = "ConsensusPathDB"
     SRC_ROOT_FOLDER = os.path.join(DATA_ARCHIVE_ROOT, SRC_NAME)
-    CWD_DIR = '/mnt/c/dev/biothings.interactions/data/ConsensusPathDB'
+    CWD_DIR = '/data/ConsensusPathDB'
     SUFFIX_ATTR = "timestamp"
     SCHEDULE = "0 9 * * *"
     SRC_URLS = ["http://cpdb.molgen.mpg.de/download/ConsensusPathDB_human_PPI.gz"]

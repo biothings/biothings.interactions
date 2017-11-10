@@ -1,2 +1,2 @@
-from . import parser
-from . import uploader
+from .dumper import ConsensusPathDBDumper
+from .uploader import ConsensusPathDBUploader

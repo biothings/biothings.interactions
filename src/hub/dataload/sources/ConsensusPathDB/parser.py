@@ -5,6 +5,7 @@ a generated dictionary of line values.
 Source Project:   biothings.interactions
 Author:  Greg Taylor:  greg.k.taylor@gmail.com
 """
+import re
 
 
 def parse_ConsensusPathDB(f):

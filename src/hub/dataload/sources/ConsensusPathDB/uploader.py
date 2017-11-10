@@ -9,10 +9,11 @@ from .parser import parse_ConsensusPathDB
 
 class ConsensusPathDBUploader(uploader.BaseSourceUploader):
 
-    main_source = "ConsensusPathDB"
-    name = "human_PPI"
+    # main_source = "ConsensusPathDB"
+    name = "ConsensusPathDB"
+    collection_name = "ConsensusPathDB_human_PPI"
 
     def load_data(self, data_folder):
-        consensus_file = os.path.join(data_folder,"ConsensusPathDB_human_PPI")
+        consensus_file = os.path.join(data_folder, self.collection_name)
         self.logger.info("Load data from file '%s'" % consensus_file)
         return parse_ConsensusPathDB(open(consensus_file))

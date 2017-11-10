@@ -18,4 +18,4 @@ class ConsensusPathDBUploader(uploader.BaseSourceUploader):
     def load_data(self, data_folder):
         consensus_file = os.path.join(data_folder, self.zip_file_name)
         self.logger.info("Load data from file '%s'" % consensus_file)
-        return parse_ConsensusPathDB(gzip.open(consensus_file, mode='r'))
+        return parse_ConsensusPathDB(gzip.open(consensus_file, mode='rt'))

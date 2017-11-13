@@ -12,4 +12,9 @@ class ConsensusPathDBDumper(LastModifiedHTTPDumper):
     CWD_DIR = '/data/ConsensusPathDB'
     SUFFIX_ATTR = "timestamp"
     SCHEDULE = "0 9 * * *"
-    SRC_URLS = ["http://cpdb.molgen.mpg.de/download/ConsensusPathDB_human_PPI.gz"]
+
+    # Development URL - avoid hitting the ConsensusPathDB site repeatedly
+    SRC_URLS = ["http://nginx/ConsensusPathDB_human_PPI.gz"]
+
+    # Production URL
+    # SRC_URLS = ["http://cpdb.molgen.mpg.de/download/ConsensusPathDB_human_PPI.gz"]

@@ -10,6 +10,7 @@ import re
 
 def parse_biogrid(f):
     for (i, line) in enumerate(f):
+        line = line.decode("utf-8")
         line = line.strip('\n')
 
       # The first commented line contains the column headers

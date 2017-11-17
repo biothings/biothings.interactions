@@ -24,7 +24,7 @@ class BiogridUploader(uploader.BaseSourceUploader):
         self.logger.info("Load biogrid data from file '%s'" % consensus_file)
 
         # Open the first file in the zip file - assuming that it is the data file
-        zip = ZipFile(self.consensus_file)
+        zip = ZipFile(consensus_file)
         tab_file = zip.open(zip.namelist()[0], mode='r')
 
         return parse_biogrid(tab_file)

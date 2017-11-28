@@ -105,4 +105,10 @@ ENV/
 
 # Biothings.interactions data files
 data/*
+# Biothings.interactions system specific files
+src/bin/ssh_host_key
+src/bin/ssh_host_key.pub
+src/config.py
+src/config_hub.py
+src/config_www.py
 

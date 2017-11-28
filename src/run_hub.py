@@ -8,6 +8,7 @@ import sys
 import multiprocessing_on_dill
 
 import config, biothings
+
 biothings.config_for_app(config)
 
 concurrent.futures.process.multiprocessing = multiprocessing_on_dill
@@ -59,13 +60,19 @@ dmanager = dumper.DumperManager(job_manager=job_manager)
 dmanager.register_sources(dataload_sources)
 dmanager.schedule_all()
 
-# retired2current = EntrezRetired2Current(convert_func=int,db_provider=mongo.get_src_db)
-# ensembl2entrez = Ensembl2Entrez(db_provider=mongo.get_src_db,
-# 		retired2current=retired2current)
-# build_manager = builder.BuilderManager(
-#         builder_class=partial(MyGeneDataBuilder,mappers=[ensembl2entrez]),
-#         job_manager=job_manager)
-# build_manager.configure()
+
+import biothings.hub.databuild.builder as builder
+from hub.databuild.builder import InteractionDataBuilder
+from hub.databuild.mapper import InteractionMapper
+interaction = InteractionMapper(name="interaction")
+pbuilder = partial(InteractionDataBuilder, mappers=[interaction])
+bmanager = builder.BuilderManager(
+        job_manager=job_manager,
+        builder_class=pbuilder,
+        poll_schedule="* * * * * */10")
+bmanager.configure()
+bmanager.poll("build", lambda conf: bmanager.merge(conf["_id"]))
+
 
 # differ_manager = differ.DifferManager(job_manager=job_manager,
 #         poll_schedule="* * * * * */10")
@@ -136,9 +143,10 @@ COMMANDS["upload_all"] = upload_manager.upload_all
 
 # admin/advanced
 EXTRA_NS = {
-        "dm" : dmanager,
-        "um" : upload_manager,
-        # "bm" : build_manager,
+        "dm": dmanager,
+        "um": upload_manager,
+        "bm": bmanager,
+        "merge": bmanager.merge,
         # "dim" : differ_manager,
         # "smt" : syncer_manager_test,
         # "smp" : syncer_manager_prod,

@@ -9,6 +9,9 @@ import re
 
 
 def parse_ConsensusPathDB(f):
+    empty_field = 'NA'
+    separator = ','
+
     for (i, line) in enumerate(f):
         line = line.strip('\n')
 
@@ -24,6 +27,6 @@ def parse_ConsensusPathDB(f):
         elif i > 1:
             _r = {}
             for (pos, val) in enumerate(line.split('\t')):
-                if val:
-                    _r[header_dict[pos]] = val if '","' not in val else val.strip('"').split('","')
+                if val and val != empty_field:
+                    _r[header_dict[pos]] = val if separator not in val else val.split(separator)
             yield _r

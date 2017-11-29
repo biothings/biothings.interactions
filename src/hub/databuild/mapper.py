@@ -14,7 +14,10 @@ class InteractionMapper(mapper.BaseMapper):
 
     def load(self):
         if self.cache is None:
-            # this is a whole dict containing all taxonomu _ids
+            # this is a whole dict containing all data
+
+            # Note this Mapper is targeted at ConsensusPathDB
+            # TODO:  point the mapper at other Uploader names
             col = mongo.get_src_db()[ConsensusPathDBUploader.name]
             self.cache = [d["_id"] for d in col.find({}, {"_id": 1})]
 

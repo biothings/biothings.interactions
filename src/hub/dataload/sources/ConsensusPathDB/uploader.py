@@ -14,6 +14,7 @@ class ConsensusPathDBUploader(uploader.BaseSourceUploader):
     name = "ConsensusPathDB"
     collection_name = "ConsensusPathDB_human_PPI"
     zip_file_name = "ConsensusPathDB_human_PPI.gz"
+    __metadata__ = {"mapper": 'interaction'}
 
     def load_data(self, data_folder):
         consensus_file = os.path.join(data_folder, self.zip_file_name)

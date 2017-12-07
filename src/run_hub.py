@@ -63,16 +63,16 @@ dmanager.schedule_all()
 
 import biothings.hub.databuild.builder as builder
 from hub.databuild.builder import InteractionDataBuilder
-from hub.databuild.mapper import InteractionMapper
-interaction = InteractionMapper(name="interaction")
-pbuilder = partial(InteractionDataBuilder, mappers=[interaction])
+from hub.databuild.mapper import BiogridMapper, ConsensusPathDBMapper
+biogrid_mapper = BiogridMapper(name="biogrid_mapper")
+consensuspathdb_mapper = ConsensusPathDBMapper(name="consensuspathdb_mapper")
+pbuilder = partial(InteractionDataBuilder, mappers=[biogrid_mapper, consensuspathdb_mapper])
 bmanager = builder.BuilderManager(
         job_manager=job_manager,
         builder_class=pbuilder,
         poll_schedule="* * * * * */10")
 bmanager.configure()
 bmanager.poll("build", lambda conf: bmanager.merge(conf["_id"]))
-
 
 # differ_manager = differ.DifferManager(job_manager=job_manager,
 #         poll_schedule="* * * * * */10")

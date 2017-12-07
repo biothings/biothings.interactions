@@ -17,7 +17,7 @@ class BiogridUploader(uploader.BaseSourceUploader):
     # file information
     zip_file_name = "BIOGRID-ALL-3.4.154.tab2.zip"
     tab_file = "BIOGRID-ALL-3.4.154.tab2.txt"
-    __metadata__ = {"mapper": 'interaction'}
+    __metadata__ = {"mapper": 'biogrid_mapper'}
 
     def load_data(self, data_folder):
         consensus_file = os.path.join(data_folder, self.zip_file_name)

@@ -165,9 +165,7 @@ EXTRA_NS = {
         "done" : done,
         }
 
-passwords = {
-        'guest': '', # guest account with no password
-        }
+passwords = config.HUB_PASSWD
 
 from biothings.utils.hub import start_server
 

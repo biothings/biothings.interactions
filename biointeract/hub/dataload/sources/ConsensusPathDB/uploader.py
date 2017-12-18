@@ -5,7 +5,7 @@ import biothings, config_hub
 biothings.config_for_app(config_hub)
 
 import biothings.hub.dataload.uploader as uploader
-from .parser import parse_ConsensusPathDB
+from .parser import CPDParser
 
 
 class ConsensusPathDBUploader(uploader.BaseSourceUploader):
@@ -19,4 +19,4 @@ class ConsensusPathDBUploader(uploader.BaseSourceUploader):
     def load_data(self, data_folder):
         consensus_file = os.path.join(data_folder, self.zip_file_name)
         self.logger.info("Load data from file '%s'" % consensus_file)
-        return parse_ConsensusPathDB(gzip.open(consensus_file, mode='rt'))
+        return CPDParser.parse_cpd_tsv_file(gzip.open(consensus_file, mode='rt'))

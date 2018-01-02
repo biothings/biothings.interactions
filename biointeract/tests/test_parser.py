@@ -9,9 +9,10 @@ import unittest
 import tempfile
 
 from hub.dataload.sources.ConsensusPathDB.parser import CPDParser
+from hub.dataload.sources.biogrid.parser import BiogridParser
 
 
-class TestCPDParserMethods(unittest.TestCase):
+class TestParserMethods(unittest.TestCase):
     """
     Test class for ConsensusPathDB parser functions.  The static methods are called on a representative
     dataset.
@@ -21,14 +22,15 @@ class TestCPDParserMethods(unittest.TestCase):
     """
 
     ConsensusPathDBFile = os.path.join(os.path.dirname(__file__), 'test_data/randomized-dataset-001')
+    biogridFile = os.path.join(os.path.dirname(__file__), 'test_data/randomized-dataset-002')
 
     def test_CPD_parse(self):
         """
-        Parse a test CPD file of 100 lines, gather statistics, and assess results
+        Parse a test CPD file of 1000 lines, gather statistics, and assess results
         :return:
         """
         # Write the contents of the test ConsenesusPathDB file to a temporary file object
-        test_file = open(TestCPDParserMethods.ConsensusPathDBFile, mode="r")
+        test_file = open(TestParserMethods.ConsensusPathDBFile, mode="r")
         cpd = []
         for record in CPDParser.parse_cpd_tsv_file(test_file):
             cpd.append(record)
@@ -41,12 +43,30 @@ class TestCPDParserMethods(unittest.TestCase):
 
         # Average number of interact_participants
         self.assertGreater(self._list_average(cpd, 'interaction_participants'), 2.5)
-
         # Average number of interaction_publications
         self.assertGreater(self._list_average(cpd, 'interaction_publications'), 3.5)
-
         # Average number of source_databases
         self.assertGreater(self._list_average(cpd, 'source_databases'), 2.5)
+
+    def test_biogrid_parse(self):
+        """
+        Parse a test biogrid file of 1000 lines, gather statistics, and assess results
+        :return:
+        """
+        # Write the contents of the test ConsenesusPathDB file to a temporary file object
+        test_file = open(TestParserMethods.biogridFile, mode="r")
+        biogrid = []
+        for record in BiogridParser.parse_biogrid_tsv_file(test_file):
+            biogrid.append(record)
+
+        ########################################################
+        # Gather some useful statistics of the resulting dataset
+        ########################################################
+
+        # Average number of interact_participants
+        self.assertGreater(self._list_average(biogrid, 'Synonyms Interactor A'), 3.5)
+        # Average number of interaction_publications
+        self.assertGreater(self._list_average(biogrid, 'Synonyms Interactor B'), 3.5)
 
     def _total(self, cpd, field):
         """

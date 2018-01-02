@@ -1,6 +1,6 @@
 """
-parse_ConsensusPathDB parses the ConsensusPathDB_human_PPI data file and yields
-a generated dictionary of line values.
+CPDParser parses the ConsensusPathDB_human_PPI data file and yields
+a generated dictionary of values.
 
 Source Project:   biothings.interactions
 Author:  Greg Taylor:  greg.k.taylor@gmail.com

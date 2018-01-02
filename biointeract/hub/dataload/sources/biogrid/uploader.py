@@ -5,7 +5,7 @@ import biothings, config_hub
 biothings.config_for_app(config_hub)
 
 import biothings.hub.dataload.uploader as uploader
-from .parser import parse_biogrid
+from .parser import BiogridParser
 
 
 class BiogridUploader(uploader.BaseSourceUploader):
@@ -28,4 +28,4 @@ class BiogridUploader(uploader.BaseSourceUploader):
         zip = ZipFile(consensus_file)
         tab_file = zip.open(zip.namelist()[0], mode='r')
 
-        return parse_biogrid(tab_file)
+        return BiogridParser.parse_biogrid_tsv_file(tab_file)

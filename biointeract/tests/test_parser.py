@@ -24,7 +24,7 @@ class TestParserMethods(unittest.TestCase):
     # ConsensusPathDBFile = os.path.join(os.path.dirname(__file__), 'test_data/randomized-dataset-001')
     # biogridFile = os.path.join(os.path.dirname(__file__), 'test_data/randomized-dataset-002')
 
-    ConsensusPathDBFile = os.path.join(os.path.dirname(__file__), 'test_data/randomized-dataset-001')
+    ConsensusPathDBFile = os.path.join(os.path.dirname(__file__), 'test_data/ConsensusPathDB_human_PPI')
     biogridFile = os.path.join(os.path.dirname(__file__), 'test_data/BIOGRID-ALL-3.4.154.tab2.txt')
 
 
@@ -46,11 +46,17 @@ class TestParserMethods(unittest.TestCase):
         self.assertGreater(self._total(cpd, 'interaction_confidence'), 305)
 
         # Average number of interact_participants
-        self.assertGreater(self._list_average(cpd, 'interaction_participants'), 2.5)
+        self.assertGreater(self._list_average(cpd, 'interaction_participants'), 2.2)
         # Average number of interaction_publications
-        self.assertGreater(self._list_average(cpd, 'interaction_publications'), 3.5)
+        self.assertGreater(self._list_average(cpd, 'interaction_publications'), 1.4)
         # Average number of source_databases
-        self.assertGreater(self._list_average(cpd, 'source_databases'), 2.5)
+        self.assertGreater(self._list_average(cpd, 'source_databases'), 1.4)
+
+        n = self._none_count(cpd)
+        self.assertEqual(n['source_databases'], 0)
+        self.assertLess(n['interaction_publications'], 2800)
+        self.assertEqual(n['interaction_participants'], 0)
+        self.assertLess(n['interaction_confidence'], 19000)
 
     def test_biogrid_parse(self):
         """
@@ -79,10 +85,17 @@ class TestParserMethods(unittest.TestCase):
         self.assertGreater(self._record_average(biogrid, 'Interactor B', 'Synonyms'), 2.5)
 
         # Get the NoneType count of the record set
-        self._none_count(biogrid)
-
-        raise ValueError
-
+        n = self._none_count(biogrid)
+        self.assertLess(n['Score'], 670000)
+        self.assertLess(n['Modification'], 1500000)
+        self.assertLess(n['Phenotypes'], 900000)
+        self.assertLess(n['Qualifications'], 500000)
+        self.assertLess(n['Tags'], 1500000)
+        self.assertEqual(n['Interactor A']['BioGRID ID'], 0)
+        self.assertLess(n['Interactor A']['Systematic Name'], 320000)
+        self.assertEqual(n['Interactor A']['Official Symbol'], 0)
+        self.assertLess(n['Interactor A']['Synonyms'], 360000)
+        self.assertLess(n['Interactor B']['Systematic Name'], 320000)
 
     def _num_values(self, records, field):
         """
@@ -190,5 +203,4 @@ class TestParserMethods(unittest.TestCase):
                 elif not record[field]:
                     r[field] = r[field] + 1
 
-        print(r)
-
+        return r

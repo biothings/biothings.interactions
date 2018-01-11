@@ -21,8 +21,12 @@ class TestParserMethods(unittest.TestCase):
     and results were manually validated.
     """
 
+    # ConsensusPathDBFile = os.path.join(os.path.dirname(__file__), 'test_data/randomized-dataset-001')
+    # biogridFile = os.path.join(os.path.dirname(__file__), 'test_data/randomized-dataset-002')
+
     ConsensusPathDBFile = os.path.join(os.path.dirname(__file__), 'test_data/randomized-dataset-001')
-    biogridFile = os.path.join(os.path.dirname(__file__), 'test_data/randomized-dataset-002')
+    biogridFile = os.path.join(os.path.dirname(__file__), 'test_data/BIOGRID-ALL-3.4.154.tab2.txt')
+
 
     def test_CPD_parse(self):
         """
@@ -63,10 +67,36 @@ class TestParserMethods(unittest.TestCase):
         # Gather some useful statistics of the resulting dataset
         ########################################################
 
-        # Average number of interact_participants
-        self.assertGreater(self._list_average(biogrid, 'Synonyms Interactor A'), 3.5)
-        # Average number of interaction_publications
-        self.assertGreater(self._list_average(biogrid, 'Synonyms Interactor B'), 3.5)
+        self.assertGreater(self._num_values(biogrid, 'Score'), 800000)
+        self.assertGreater(self._num_values(biogrid, 'Modification'), 19000)
+        self.assertGreater(self._list_average(biogrid, 'Phenotypes'), 0.4)
+        self.assertGreater(self._list_average(biogrid, 'Qualifications'), 1.1)
+        self.assertEqual(self._num_values(biogrid, 'Tags'), 0)
+
+        # Average number of Synonyms for Interactor A
+        self.assertGreater(self._record_average(biogrid, 'Interactor A', 'Synonyms'), 2.5)
+        # Average number of Synonyms for Interactor B
+        self.assertGreater(self._record_average(biogrid, 'Interactor B', 'Synonyms'), 2.5)
+
+        # Get the NoneType count of the record set
+        self._none_count(biogrid)
+
+        raise ValueError
+
+
+    def _num_values(self, records, field):
+        """
+        Compute the total number of non NoneType values for a field in a given record.
+        :param records:
+        :param field:
+        :return:
+        """
+        # Number of records with non-null values
+        total = 0
+        for _r in records:
+            if _r[field]:
+                total = total + 1
+        return total
 
     def _total(self, cpd, field):
         """
@@ -75,7 +105,7 @@ class TestParserMethods(unittest.TestCase):
         :param field:
         :return:
         """
-        # Number of records with non-null confidence
+        # Number of records with non-null values
         total = 0
         for _c in cpd:
             if _c[field]:
@@ -104,3 +134,61 @@ class TestParserMethods(unittest.TestCase):
         """
         count = self._list_count(cpd, field)
         return count / len(cpd)
+
+    def _record_average(self, records, field1, field2):
+        """
+        Compute the average number of list elements over the test dataset for a given record field.
+        :param cpd:
+        :param field:
+        :return:
+        """
+        count = 0
+        for record in records:
+            if record[field1][field2]:
+                count = count + len(record[field1][field2])
+        return count / len(records)
+
+    def _find20(self, records, field):
+        """
+
+        :param records:
+        :param field:
+        :return:
+        """
+        i = 0
+        for r in records:
+            if r[field]:
+                print("%s:%s" % (field, r[field]))
+                i = i + 1
+            if i >= 20:
+                break
+
+    def _none_count(self, records):
+        """
+        Count the number of NoneType occurences within the record set.
+        :param records:
+        :return:
+        """
+
+        # Data structure to return
+        r = {}
+        for field in records[0].keys():
+            if isinstance(records[0][field], dict):
+                r[field] = {}
+                for subfield in records[0][field].keys():
+                    r[field][subfield] = 0
+            else:
+                r[field] = 0
+
+        # Calculate all none types - special case for dictionaries
+        for record in records:
+            for field in record.keys():
+                if isinstance(record[field], dict):
+                    for subfield in record[field].keys():
+                        if not record[field][subfield]:
+                            r[field][subfield] = r[field][subfield] + 1
+                elif not record[field]:
+                    r[field] = r[field] + 1
+
+        print(r)
+

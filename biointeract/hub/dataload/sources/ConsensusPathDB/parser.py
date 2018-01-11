@@ -6,22 +6,14 @@ Source Project:   biothings.interactions
 Author:  Greg Taylor:  greg.k.taylor@gmail.com
 """
 import re
+from hub.dataload.BiointeractParser import BiointeractParser
 
 
-class CPDParser(object):
+class CPDParser(BiointeractParser):
     # Static Constants
     EMPTY_FIELD = 'NA'
     SEPARATOR = ','
     HUMAN = '_HUMAN'
-
-    @staticmethod
-    def parse_interaction_confidence(entry):
-        """
-        Parse interaction confidence given as string from the tsv file.
-        :param entry: a string representing the confidence
-        :return: float
-        """
-        return float(entry) if entry else None
 
     @staticmethod
     def parse_interaction_participants(entry):
@@ -32,7 +24,7 @@ class CPDParser(object):
         :param entry: a string representing the list
         :return: list of strings
         """
-        vals = [x for x in entry.split(CPDParser.SEPARATOR)] if entry else None
+        vals = CPDParser.parse_list(entry, CPDParser.SEPARATOR)
         return list(map((lambda x: x.replace(CPDParser.HUMAN, '')), vals)) if vals else None
 
     @staticmethod
@@ -44,7 +36,7 @@ class CPDParser(object):
         :param entry: a string representing the list
         :return: list of integers
         """
-        vals = [x for x in entry.split(CPDParser.SEPARATOR)] if entry else None
+        vals = CPDParser.parse_list(entry, CPDParser.SEPARATOR)
         return list(map(CPDParser.safe_int, vals)) if vals else None
 
     @staticmethod
@@ -54,7 +46,7 @@ class CPDParser(object):
         :param entry: a string representing the list
         :return: list of strings
         """
-        return [x for x in entry.split(CPDParser.SEPARATOR)] if entry else None
+        return CPDParser.parse_list(entry, CPDParser.SEPARATOR)
 
     @staticmethod
     def parse_cpd_tsv_line(line_dict):
@@ -67,7 +59,7 @@ class CPDParser(object):
         # Replace all empty fields with None
         r = {k: v if v != CPDParser.EMPTY_FIELD else None for k, v in line_dict.items()}
 
-        r['interaction_confidence'] = CPDParser.parse_interaction_confidence(r['interaction_confidence'])
+        r['interaction_confidence'] = CPDParser.safe_float(r['interaction_confidence'])
         r['interaction_participants'] = CPDParser.parse_interaction_participants(r['interaction_participants'])
         r['interaction_publications'] = CPDParser.parse_interaction_publications(r['interaction_publications'])
         r['source_databases'] = CPDParser.parse_source_databases(r['source_databases'])
@@ -97,16 +89,3 @@ class CPDParser(object):
                 for (pos, val) in enumerate(line.split('\t')):
                     _r[header_dict[pos]] = val
                 yield CPDParser.parse_cpd_tsv_line(_r)
-
-    @staticmethod
-    def safe_int(str):
-        """
-        Utility function to convert a string to an integer returning 0 if the
-        conversion of unsucessful.
-        :param str:
-        :return:
-        """
-        try:
-            return int(str)
-        except ValueError:
-            return 0

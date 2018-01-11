@@ -2,16 +2,61 @@
 BiogridParser parses the biogrid data file and yields
 a generated dictionary of record values.
 
+For a description of the BIOGRID file format see the
+following link:
+
+https://wiki.thebiogrid.org/doku.php/biogrid_tab_version_2.0
+
 Source Project:   biothings.interactions
 Author:  Greg Taylor:  greg.k.taylor@gmail.com
 """
 import re
+from hub.dataload.BiointeractParser import BiointeractParser
 
 
-class BiogridParser(object):
+class BiogridParser(BiointeractParser):
     # Static Constants
     EMPTY_FIELD = '-'
     SEPARATOR = '|'
+
+    ###############################################################
+    # Fields to be grouped into single documents within each record
+    ###############################################################
+    int_fields = [
+        'BioGRID Interaction ID',
+        'Entrez Gene Interactor A',
+        'Entrez Gene Interactor B',
+        'BioGRID ID Interactor A',
+        'BioGRID ID Interactor B',
+        'Pubmed ID',
+        'Organism Interactor A',
+        'Organism Interactor B'
+    ]
+    interactor_A_fields = {
+        'Entrez Gene Interactor A': 'Entrez Gene',
+        'BioGRID ID Interactor A': 'BioGRID ID',
+        'Systematic Name Interactor A': 'Systematic Name',
+        'Official Symbol Interactor A': 'Official Symbol',
+        'Synonyms Interactor A': 'Synonyms',
+        'Organism Interactor A': 'Organism'
+    }
+    interactor_B_fields = {
+        'Entrez Gene Interactor B': 'Entrez Gene',
+        'BioGRID ID Interactor B': 'BioGRID ID',
+        'Systematic Name Interactor B': 'Systematic Name',
+        'Official Symbol Interactor B': 'Official Symbol',
+        'Synonyms Interactor B': 'Synonyms',
+        'Organism Interactor B': 'Organism'
+    }
+    citation_fields = {
+        'Author': 'Author',
+        'Pubmed ID': 'Pubmed ID'
+    }
+    experiment_fields = {
+        'Experimental System': 'System',
+        'Experimental System Type': 'System Type'
+    }
+
 
     @staticmethod
     def parse_biogrid_tsv_file(f):
@@ -21,6 +66,10 @@ class BiogridParser(object):
         :return: yields a generator of parsed objects
         """
         for (i, line) in enumerate(f):
+            # If the line returned is byptes instead
+            # of a a string then it needs to be decoded
+            if isinstance(line, (bytes, bytearray)):
+                line = line.decode("utf-8")
             line = line.strip('\n')
 
             # The first commented line contains the column headers
@@ -46,52 +95,18 @@ class BiogridParser(object):
         # Replace all empty fields with None
         r = {k: v if v != BiogridParser.EMPTY_FIELD else None for k, v in line_dict.items()}
 
-        int_fields = [
-            'BioGRID Interaction ID',
-            'Entrez Gene Interactor A',
-            'Entrez Gene Interactor B',
-            'BioGRID ID Interactor A',
-            'BioGRID ID Interactor B',
-            'Pubmed ID',
-            'Organism Interactor A',
-            'Organism Interactor B'
-        ]
+        r = BiogridParser.parse_int_fields(r, BiogridParser.int_fields)
 
-        r = BiogridParser.parse_int_fields(r, int_fields)
-        r['Synonyms Interactor A'] = BiogridParser.parse_synonyms(r['Synonyms Interactor A'])
-        r['Synonyms Interactor B'] = BiogridParser.parse_synonyms(r['Synonyms Interactor B'])
+        r['Score'] = BiogridParser.safe_float(r['Score'])
+
+        r['Synonyms Interactor A'] = BiogridParser.parse_list(r['Synonyms Interactor A'], BiogridParser.SEPARATOR)
+        r['Synonyms Interactor B'] = BiogridParser.parse_list(r['Synonyms Interactor B'], BiogridParser.SEPARATOR)
+        r['Phenotypes'] = BiogridParser.parse_list(r['Phenotypes'], BiogridParser.SEPARATOR)
+        r['Qualifications'] = BiogridParser.parse_list(r['Qualifications'], BiogridParser.SEPARATOR)
+
+        r = BiogridParser.group_fields(r, 'Interactor A', BiogridParser.interactor_A_fields)
+        r = BiogridParser.group_fields(r, 'Interactor B', BiogridParser.interactor_B_fields)
+        r = BiogridParser.group_fields(r, 'Citation', BiogridParser.citation_fields)
+        r = BiogridParser.group_fields(r, 'Experiment', BiogridParser.experiment_fields)
+
         return r
-
-    @staticmethod
-    def parse_synonyms(entry):
-        """
-        Parse all synonyms given as string from the tsv file.
-        The resulting participant identifier strings will be returned,
-        :param entry: a string representing the list
-        :return: list of strings
-        """
-        return [x for x in entry.split(BiogridParser.SEPARATOR)] if entry else None
-
-    @staticmethod
-    def parse_int_fields(record, int_fields):
-        """
-        Parse integer fields in a biogrid record dictionary
-        :param entry: a record dictionary
-        :return: a converted record dictionary
-        """
-        for field in int_fields:
-            record[field] = BiogridParser.safe_int(record[field])
-        return record
-
-    @staticmethod
-    def safe_int(str):
-        """
-        Utility function to convert a string to an integer returning 0 if the
-        conversion of unsucessful.
-        :param str:
-        :return:
-        """
-        try:
-            return int(str)
-        except ValueError:
-            return 0

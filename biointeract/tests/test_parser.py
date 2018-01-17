@@ -73,29 +73,29 @@ class TestParserMethods(unittest.TestCase):
         # Gather some useful statistics of the resulting dataset
         ########################################################
 
-        self.assertGreater(self._num_values(biogrid, 'Score'), 800000)
-        self.assertGreater(self._num_values(biogrid, 'Modification'), 19000)
-        self.assertGreater(self._list_average(biogrid, 'Phenotypes'), 0.4)
-        self.assertGreater(self._list_average(biogrid, 'Qualifications'), 1.1)
-        self.assertEqual(self._num_values(biogrid, 'Tags'), 0)
+        self.assertGreater(self._num_values(biogrid, 'score'), 800000)
+        self.assertGreater(self._num_values(biogrid, 'modification'), 19000)
+        self.assertGreater(self._list_average(biogrid, 'phenotypes'), 0.4)
+        self.assertGreater(self._list_average(biogrid, 'qualifications'), 1.1)
+        self.assertEqual(self._num_values(biogrid, 'tags'), 0)
 
         # Average number of Synonyms for Interactor A
-        self.assertGreater(self._record_average(biogrid, 'Interactor A', 'Synonyms'), 2.5)
+        self.assertGreater(self._record_average(biogrid, 'interactor_a', 'synonyms'), 2.5)
         # Average number of Synonyms for Interactor B
-        self.assertGreater(self._record_average(biogrid, 'Interactor B', 'Synonyms'), 2.5)
+        self.assertGreater(self._record_average(biogrid, 'interactor_b', 'synonyms'), 2.5)
 
         # Get the NoneType count of the record set
         n = self._none_count(biogrid)
-        self.assertLess(n['Score'], 670000)
-        self.assertLess(n['Modification'], 1500000)
-        self.assertLess(n['Phenotypes'], 900000)
-        self.assertLess(n['Qualifications'], 500000)
-        self.assertLess(n['Tags'], 1500000)
-        self.assertEqual(n['Interactor A']['BioGRID ID'], 0)
-        self.assertLess(n['Interactor A']['Systematic Name'], 320000)
-        self.assertEqual(n['Interactor A']['Official Symbol'], 0)
-        self.assertLess(n['Interactor A']['Synonyms'], 360000)
-        self.assertLess(n['Interactor B']['Systematic Name'], 320000)
+        self.assertLess(n['score'], 670000)
+        self.assertLess(n['modification'], 1500000)
+        self.assertLess(n['phenotypes'], 900000)
+        self.assertLess(n['qualifications'], 500000)
+        self.assertLess(n['tags'], 1500000)
+        self.assertEqual(n['interactor_a']['biogrid_id'], 0)
+        self.assertLess(n['interactor_a']['systematic_name'], 320000)
+        self.assertEqual(n['interactor_a']['symbol'], 0)
+        self.assertLess(n['interactor_a']['synonyms'], 360000)
+        self.assertLess(n['interactor_b']['systematic_name'], 320000)
 
     def _num_values(self, records, field):
         """

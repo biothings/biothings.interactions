@@ -19,44 +19,53 @@ class BiogridParser(BiointeractParser):
     EMPTY_FIELD = '-'
     SEPARATOR = '|'
 
+    rename_map = {
+        'Entrez Gene Interactor A': 'entrezgene_interactor_a',
+        'Entrez Gene Interactor B': 'entrezgene_interactor_b',
+        'Official Symbol Interactor A': 'symbol_interactor_a',
+        'Official Symbol Interactor B': 'symbol_interactor_b',
+        'Pubmed ID': 'pubmed',
+        'Organism Interactor A': 'taxid_interactor_a',
+        'Organism Interactor B': 'taxid_interactor_b',
+        'Source Database': 'src_db'
+    }
+    int_fields = [
+        'biogrid_interaction_id',
+        'entrezgene_interactor_a',
+        'entrezgene_interactor_b',
+        'biogrid_id_interactor_a',
+        'biogrid_id_interactor_b',
+        'pubmed',
+        'taxid_interactor_a',
+        'taxid_interactor_b'
+    ]
     ###############################################################
     # Fields to be grouped into single documents within each record
     ###############################################################
-    int_fields = [
-        'BioGRID Interaction ID',
-        'Entrez Gene Interactor A',
-        'Entrez Gene Interactor B',
-        'BioGRID ID Interactor A',
-        'BioGRID ID Interactor B',
-        'Pubmed ID',
-        'Organism Interactor A',
-        'Organism Interactor B'
-    ]
     interactor_A_fields = {
-        'Entrez Gene Interactor A': 'Entrez Gene',
-        'BioGRID ID Interactor A': 'BioGRID ID',
-        'Systematic Name Interactor A': 'Systematic Name',
-        'Official Symbol Interactor A': 'Official Symbol',
-        'Synonyms Interactor A': 'Synonyms',
-        'Organism Interactor A': 'Organism'
+        'entrez_interactor_a': 'entrez',
+        'biogrid_id_interactor_a': 'biogrid_id',
+        'systematic_name_interactor_a': 'systematic_name',
+        'symbol_interactor_a': 'symbol',
+        'synonyms_interactor_a': 'synonyms',
+        'organism_interactor_a': 'organism'
     }
     interactor_B_fields = {
-        'Entrez Gene Interactor B': 'Entrez Gene',
-        'BioGRID ID Interactor B': 'BioGRID ID',
-        'Systematic Name Interactor B': 'Systematic Name',
-        'Official Symbol Interactor B': 'Official Symbol',
-        'Synonyms Interactor B': 'Synonyms',
-        'Organism Interactor B': 'Organism'
+        'entrez_interactor_b': 'entrez',
+        'biogrid_id_interactor_b': 'biogrid_id',
+        'systematic_name_interactor_b': 'systematic_name',
+        'symbol_interactor_b': 'symbol',
+        'synonyms_interactor_b': 'synonyms',
+        'organism_interactor_b': 'organism'
     }
     citation_fields = {
-        'Author': 'Author',
-        'Pubmed ID': 'Pubmed ID'
+        'author': 'author',
+        'pubmed': 'pubmed'
     }
     experiment_fields = {
-        'Experimental System': 'System',
-        'Experimental System Type': 'System Type'
+        'experimental_system': 'system',
+        'experimental_system_type': 'system_type'
     }
-
 
     @staticmethod
     def parse_biogrid_tsv_file(f):
@@ -95,18 +104,41 @@ class BiogridParser(BiointeractParser):
         # Replace all empty fields with None
         r = {k: v if v != BiogridParser.EMPTY_FIELD else None for k, v in line_dict.items()}
 
+        r = BiogridParser.rename_fields(r, BiogridParser.rename_map)
+
         r = BiogridParser.parse_int_fields(r, BiogridParser.int_fields)
 
-        r['Score'] = BiogridParser.safe_float(r['Score'])
+        r['score'] = BiogridParser.safe_float(r['score'])
 
-        r['Synonyms Interactor A'] = BiogridParser.parse_list(r['Synonyms Interactor A'], BiogridParser.SEPARATOR)
-        r['Synonyms Interactor B'] = BiogridParser.parse_list(r['Synonyms Interactor B'], BiogridParser.SEPARATOR)
-        r['Phenotypes'] = BiogridParser.parse_list(r['Phenotypes'], BiogridParser.SEPARATOR)
-        r['Qualifications'] = BiogridParser.parse_list(r['Qualifications'], BiogridParser.SEPARATOR)
+        r['synonyms_interactor_a'] = BiogridParser.parse_list(r['synonyms_interactor_a'], BiogridParser.SEPARATOR)
+        r['synonyms_interactor_b'] = BiogridParser.parse_list(r['synonyms_interactor_b'], BiogridParser.SEPARATOR)
+        r['phenotypes'] = BiogridParser.parse_list(r['phenotypes'], BiogridParser.SEPARATOR)
+        r['qualifications'] = BiogridParser.parse_list(r['qualifications'], BiogridParser.SEPARATOR)
 
-        r = BiogridParser.group_fields(r, 'Interactor A', BiogridParser.interactor_A_fields)
-        r = BiogridParser.group_fields(r, 'Interactor B', BiogridParser.interactor_B_fields)
-        r = BiogridParser.group_fields(r, 'Citation', BiogridParser.citation_fields)
-        r = BiogridParser.group_fields(r, 'Experiment', BiogridParser.experiment_fields)
+        r = BiogridParser.group_fields(r, 'interactor_a', BiogridParser.interactor_A_fields)
+        r = BiogridParser.group_fields(r, 'interactor_b', BiogridParser.interactor_B_fields)
+        r = BiogridParser.group_fields(r, 'citation', BiogridParser.citation_fields)
+        r = BiogridParser.group_fields(r, 'experiment', BiogridParser.experiment_fields)
+
+        # Finally set the _id field for the record
+        r['_id'] = set([r['interactor_a']['symbol'], r['interactor_b']['symbol']])
 
         return r
+
+    @staticmethod
+    def rename_fields(r, rename_map):
+        """
+        Rename all fields to follow the biothings convention using lowercases and
+        underscores.  Further, rename fields using the parameter 'rename_map'.
+        :param r:
+        :param rename_map:
+        :return:
+        """
+        new_record = {}
+        for f in r.keys():
+            if f in rename_map.keys():
+                new_record[rename_map[f]] = r[f]
+            else:
+                new_key = f.lower().replace(' ', '_')
+                new_record[new_key] = r[f]
+        return new_record

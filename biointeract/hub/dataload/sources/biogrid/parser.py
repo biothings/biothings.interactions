@@ -11,8 +11,10 @@ Source Project:   biothings.interactions
 Author:  Greg Taylor:  greg.k.taylor@gmail.com
 """
 import re
-from hub.dataload.BiointeractParser import BiointeractParser
+import operator
 
+from hub.dataload.BiointeractParser import BiointeractParser
+from biothings.utils.dataload import dict_sweep
 
 class BiogridParser(BiointeractParser):
     # Static Constants
@@ -43,20 +45,20 @@ class BiogridParser(BiointeractParser):
     # Fields to be grouped into single documents within each record
     ###############################################################
     interactor_A_fields = {
-        'entrez_interactor_a': 'entrez',
+        'entrezgene_interactor_a': 'entrezgene',
         'biogrid_id_interactor_a': 'biogrid_id',
         'systematic_name_interactor_a': 'systematic_name',
         'symbol_interactor_a': 'symbol',
         'synonyms_interactor_a': 'synonyms',
-        'organism_interactor_a': 'organism'
+        'taxid_interactor_a': 'taxid'
     }
     interactor_B_fields = {
-        'entrez_interactor_b': 'entrez',
+        'entrezgene_interactor_b': 'entrezgene',
         'biogrid_id_interactor_b': 'biogrid_id',
         'systematic_name_interactor_b': 'systematic_name',
         'symbol_interactor_b': 'symbol',
         'synonyms_interactor_b': 'synonyms',
-        'organism_interactor_b': 'organism'
+        'taxid_interactor_b': 'taxid'
     }
     citation_fields = {
         'author': 'author',
@@ -64,7 +66,8 @@ class BiogridParser(BiointeractParser):
     }
     experiment_fields = {
         'experimental_system': 'system',
-        'experimental_system_type': 'system_type'
+        'experimental_system_type': 'system_type',
+        'throughput': 'throughput'
     }
 
     @staticmethod
@@ -74,6 +77,9 @@ class BiogridParser(BiointeractParser):
         :param f: file opened for reading in binary mode
         :return: yields a generator of parsed objects
         """
+
+        cache = {}
+
         for (i, line) in enumerate(f):
             # If the line returned is byptes instead
             # of a a string then it needs to be decoded
@@ -91,10 +97,37 @@ class BiogridParser(BiointeractParser):
                 _r = {}
                 for (pos, val) in enumerate(line.split('\t')):
                     _r[header_dict[pos]] = val
-                yield BiogridParser.parse_biogrid_tsv_line(_r)
+                id, r = BiogridParser.parse_biogrid_tsv_line(i, _r)
+                if id not in cache.keys():
+                    cache[id] = [r]
+                else:
+                    cache[id] = [r] + cache[id]
+
+        # transform cache from dictionary to list
+        l = []
+        for k in cache.keys():
+            r = {}
+            r['_id'] = k
+            abbreviated_cache = []
+            for c in cache[k]:
+                if 'interactor_a' in c.keys() and 'interactor_b' in c.keys() and 'direction' in c.keys():
+                    if c['direction'] == 'A->B':
+                        r['interactor_a'] = c['interactor_a']
+                        r['interactor_b'] = c['interactor_b']
+                        c.pop('interactor_a')
+                        c.pop('interactor_b')
+                    if c['direction'] == 'B->A':
+                        r['interactor_a'] = c['interactor_b']
+                        r['interactor_b'] = c['interactor_a']
+                        c.pop('interactor_a')
+                        c.pop('interactor_b')
+                    abbreviated_cache.append(c)
+
+            r['biogrid'] = abbreviated_cache
+            yield r
 
     @staticmethod
-    def parse_biogrid_tsv_line(line_dict):
+    def parse_biogrid_tsv_line(line_num, line_dict):
         """
         Parse a dictionary representing a tsv line with a key, value pair for
         each column in the tsv file.
@@ -120,10 +153,31 @@ class BiogridParser(BiointeractParser):
         r = BiogridParser.group_fields(r, 'citation', BiogridParser.citation_fields)
         r = BiogridParser.group_fields(r, 'experiment', BiogridParser.experiment_fields)
 
-        # Finally set the _id field for the record
-        r['_id'] = set([r['interactor_a']['symbol'], r['interactor_b']['symbol']])
+        r = BiogridParser.sweep_record(r)
+        id, r = BiogridParser.set_id(r)
 
-        return r
+        return id, r
+
+    @staticmethod
+    def set_id(r):
+        """
+        Set the id field for the record.  Interactors a and b are ordered by their
+        entrez gene identifier.  A modifies record with an id is returned.
+        :param r:
+        :return:
+        """
+        if 'entrezgene' in r['interactor_a'].keys() and 'entrezgene' in r['interactor_b'].keys():
+            entrez_a = int(r['interactor_a']['entrezgene'])
+            entrez_b = int(r['interactor_b']['entrezgene'])
+            if entrez_a < entrez_b:
+                id = 'entrez:{0}-entrez:{1}'.format(entrez_a, entrez_b)
+                r['direction'] = 'A->B'
+            else:
+                id = 'entrezgene:{0}-entrezgene:{1}'.format(entrez_b, entrez_a)
+                r['direction'] = 'B->A'
+        else:
+            id = None
+        return id, r
 
     @staticmethod
     def rename_fields(r, rename_map):
@@ -142,3 +196,21 @@ class BiogridParser(BiointeractParser):
                 new_key = f.lower().replace(' ', '_')
                 new_record[new_key] = r[f]
         return new_record
+
+    @staticmethod
+    def sweep_record(r):
+        """
+        Remove all None fields from a biogrid record
+        :param r:
+        :return:
+        """
+        r2 = {}
+        for k1 in r.keys():
+            if isinstance(r[k1], dict):
+                r2[k1] = {}
+                for k2 in r[k1]:
+                    if r[k1][k2]:
+                        r2[k1][k2] = r[k1][k2]
+            elif r[k1]:
+                r2[k1] = r[k1]
+        return r2

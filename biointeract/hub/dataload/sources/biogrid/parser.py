@@ -98,12 +98,19 @@ class BiogridParser(BiointeractParser):
                 for (pos, val) in enumerate(line.split('\t')):
                     _r[header_dict[pos]] = val
                 id, r = BiogridParser.parse_biogrid_tsv_line(i, _r)
+                
+                # Add the id and record to the cache
                 if id not in cache.keys():
                     cache[id] = [r]
                 else:
                     cache[id] = [r] + cache[id]
 
-        # transform cache from dictionary to list
+        #########################################
+        # Transform cache from dictionary to list
+        #########################################
+        # The following code trnsforms the cache from a dictionary
+        # an abbreviate format with two interactors per record.
+        # Additional metadata is also included as a list
         l = []
         for k in cache.keys():
             r = {}

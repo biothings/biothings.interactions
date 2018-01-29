@@ -22,10 +22,10 @@ class TestParserMethods(unittest.TestCase):
     """
 
     # ConsensusPathDBFile = os.path.join(os.path.dirname(__file__), 'test_data/randomized-dataset-001')
-    # biogridFile = os.path.join(os.path.dirname(__file__), 'test_data/randomized-dataset-002')
+    biogridFile = os.path.join(os.path.dirname(__file__), 'test_data/randomized-dataset-002')
 
     ConsensusPathDBFile = os.path.join(os.path.dirname(__file__), 'test_data/ConsensusPathDB_human_PPI')
-    biogridFile = os.path.join(os.path.dirname(__file__), 'test_data/BIOGRID-ALL-3.4.154.tab2.txt')
+    # biogridFile = os.path.join(os.path.dirname(__file__), 'test_data/BIOGRID-ALL-3.4.154.tab2.txt')
 
 
     def test_CPD_parse(self):
@@ -57,45 +57,6 @@ class TestParserMethods(unittest.TestCase):
         self.assertLess(n['interaction_publications'], 2800)
         self.assertEqual(n['interaction_participants'], 0)
         self.assertLess(n['interaction_confidence'], 19000)
-
-    def test_biogrid_parse(self):
-        """
-        Parse a test biogrid file of 1000 lines, gather statistics, and assess results
-        :return:
-        """
-        # Write the contents of the test ConsenesusPathDB file to a temporary file object
-        test_file = open(TestParserMethods.biogridFile, mode="r")
-        biogrid = []
-        for record in BiogridParser.parse_biogrid_tsv_file(test_file):
-            biogrid.append(record)
-
-        ########################################################
-        # Gather some useful statistics of the resulting dataset
-        ########################################################
-
-        self.assertGreater(self._num_values(biogrid, 'score'), 800000)
-        self.assertGreater(self._num_values(biogrid, 'modification'), 19000)
-        self.assertGreater(self._list_average(biogrid, 'phenotypes'), 0.4)
-        self.assertGreater(self._list_average(biogrid, 'qualifications'), 1.1)
-        self.assertEqual(self._num_values(biogrid, 'tags'), 0)
-
-        # Average number of Synonyms for Interactor A
-        self.assertGreater(self._record_average(biogrid, 'interactor_a', 'synonyms'), 2.5)
-        # Average number of Synonyms for Interactor B
-        self.assertGreater(self._record_average(biogrid, 'interactor_b', 'synonyms'), 2.5)
-
-        # Get the NoneType count of the record set
-        n = self._none_count(biogrid)
-        self.assertLess(n['score'], 670000)
-        self.assertLess(n['modification'], 1500000)
-        self.assertLess(n['phenotypes'], 900000)
-        self.assertLess(n['qualifications'], 500000)
-        self.assertLess(n['tags'], 1500000)
-        self.assertEqual(n['interactor_a']['biogrid_id'], 0)
-        self.assertLess(n['interactor_a']['systematic_name'], 320000)
-        self.assertEqual(n['interactor_a']['symbol'], 0)
-        self.assertLess(n['interactor_a']['synonyms'], 360000)
-        self.assertLess(n['interactor_b']['systematic_name'], 320000)
 
     def _num_values(self, records, field):
         """

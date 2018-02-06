@@ -98,7 +98,7 @@ class BiogridParser(BiointeractParser):
                 for (pos, val) in enumerate(line.split('\t')):
                     _r[header_dict[pos]] = val
                 id, r = BiogridParser.parse_biogrid_tsv_line(i, _r)
-                
+
                 # Add the id and record to the cache
                 if id not in cache.keys():
                     cache[id] = [r]
@@ -177,7 +177,7 @@ class BiogridParser(BiointeractParser):
             entrez_a = int(r['interactor_a']['entrezgene'])
             entrez_b = int(r['interactor_b']['entrezgene'])
             if entrez_a < entrez_b:
-                id = 'entrez:{0}-entrez:{1}'.format(entrez_a, entrez_b)
+                id = 'entrezgene:{0}-entrezgene:{1}'.format(entrez_a, entrez_b)
                 r['direction'] = 'A->B'
             else:
                 id = 'entrezgene:{0}-entrezgene:{1}'.format(entrez_b, entrez_a)

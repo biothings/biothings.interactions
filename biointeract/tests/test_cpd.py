@@ -14,19 +14,11 @@ from hub.dataload.sources.biogrid.parser import BiogridParser
 
 class TestParserMethods(unittest.TestCase):
     """
-    Test class for ConsensusPathDB parser functions.  The static methods are called on a representative
+    Test class for ConsensusPathDB parser functions.  The static methods are called on an actual
     dataset.
-
-    The datasets were extracted from a debugging screen query, results were pruned down to one entry
-    and results were manually validated.
     """
 
-    # ConsensusPathDBFile = os.path.join(os.path.dirname(__file__), 'test_data/randomized-dataset-001')
-    biogridFile = os.path.join(os.path.dirname(__file__), 'test_data/randomized-dataset-002')
-
     ConsensusPathDBFile = os.path.join(os.path.dirname(__file__), 'test_data/ConsensusPathDB_human_PPI')
-    # biogridFile = os.path.join(os.path.dirname(__file__), 'test_data/BIOGRID-ALL-3.4.154.tab2.txt')
-
 
     def test_CPD_parse(self):
         """

@@ -1,0 +1,51 @@
+{
+  '_id': 'entrezgene:31342-entrezgene:35662',
+  'interactor_a': {
+    'entrezgene': 31342,
+    'biogrid_id': 57861,
+    'systematic_name': 'Dmel_CG2934',
+    'symbol': 'VhaAC39-1',
+    'synonyms': [
+      'ATP6V0D1',
+      'CG2934',
+      'DmelCG2934',
+      'VhaAC39',
+      'anon-EST:GressD5'
+    ],
+    'taxid': 7227
+  },
+  'interactor_b': {
+    'entrezgene': 35662,
+    'biogrid_id': 61542,
+    'systematic_name': 'Dmel_CG11121',
+    'symbol': 'so',
+    'synonyms': [
+      'CG11121',
+      'DmelCG11121',
+      'Drl',
+      'Mdu',
+      'ami',
+      'mda',
+      'med',
+      'old',
+      'somda'
+    ],
+    'taxid': 7227
+  },
+  'biogrid': [
+    {
+      'biogrid_interaction_id': 31398,
+      'src_db': 'BIOGRID',
+      'citation': {
+        'author': 'Giot L (2003)',
+        'pubmed': 14605208
+      },
+      'experiment': {
+        'system': 'Two-hybrid',
+        'system_type': 'physical',
+        'throughput': 'High Throughput'
+      },
+      'direction': 'B->A'
+    }
+  ]
+}

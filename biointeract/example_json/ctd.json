@@ -1,0 +1,29 @@
+{
+  '_id': 'entrezgene:112398-mesh:C025205',
+  'interactor_a': {
+    'symbol': 'EGLN2',
+    'entrezgene': '112398',
+    'geneforms': [
+      'mRNA'
+    ]
+  },
+  'interactor_b': {
+    'chemicalname': '1,10-phenanthroline',
+    'chemicalid': 'C025205',
+    'casrn': '66-71-7'
+  },
+  'ctd': [
+    {
+      'organism': 'Homo sapiens',
+      'organismid': '9606',
+      'interaction': '1,10-phenanthroline results in decreased expression of EGLN2 mRNA',
+      'interactionactions': [
+        'decreases^expression'
+      ],
+      'pubmedids': [
+        19502547
+      ],
+      'direction': 'A->B'
+    }
+  ]
+}

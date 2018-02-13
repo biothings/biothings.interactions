@@ -1,0 +1,24 @@
+{
+  'source_databases': [
+    'DIP',
+    'IntAct',
+    'Reactome',
+    'HumanCyc'
+  ],
+  'interaction_publications': [
+    23643948,
+    0
+  ],
+  'interaction_participants': [
+    'IMDH1'
+  ],
+  'interaction_confidence': None
+}
+
+
+{
+  'source_databases': 0,
+  'interaction_publications': 2725,
+  'interaction_participants': 0,
+  'interaction_confidence': 18417
+}

@@ -1,0 +1,14 @@
+# Test data download URLs
+
+BioGrid:
+https://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-3.4.156/BIOGRID-ALL-3.4.156.tab2.zip
+
+ConsensusPathDB:
+http://cpdb.molgen.mpg.de/download/ConsensusPathDB_human_PPI.gz 
+
+CTD:
+http://ctdbase.org/reports/CTD_chem_gene_ixns.tsv.gz
+
+HiNT:
+http://hint.yulab.org/download/HomoSapiens/binary/hq/
+

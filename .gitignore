@@ -111,4 +111,9 @@ biointeract/bin/ssh_host_key.pub
 biointeract/config.py
 biointeract/config_hub.py
 biointeract/config_www.py
+# Biothings.interactions test data files
+biointeract/tests/test_data/BIOGRID-ALL-3.4.156.tab2.txt
+biointeract/tests/test_data/CTD_chem_gene_ixns.tsv
+biointeract/tests/test_data/ConsensusPathDB_human_PPI
+biointeract/tests/test_data/HomoSapiens_htb_hq.txt
 

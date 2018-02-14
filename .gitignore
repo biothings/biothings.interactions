@@ -103,6 +103,10 @@ ENV/
 # PyCharm
 .idea/
 
+# pyvenv
+pyvenv.cfg
+Scripts/
+
 # Biothings.interactions data files
 data/*
 # Biothings.interactions system specific files

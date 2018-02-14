@@ -53,6 +53,25 @@ class BiointeractParser(object):
             record[field] = BiointeractParser.safe_int(record[field])
         return record
 
+
+    @staticmethod
+    def rename_fields(r, rename_map):
+        """
+        Rename all fields to follow the biothings convention using lowercases and
+        underscores.  Further, rename fields using the parameter 'rename_map'.
+        :param r:
+        :param rename_map:
+        :return:
+        """
+        new_record = {}
+        for f in r.keys():
+            if f in rename_map.keys():
+                new_record[rename_map[f]] = r[f]
+            else:
+                new_key = f.lower().replace(' ', '_')
+                new_record[new_key] = r[f]
+        return new_record
+
     @staticmethod
     def safe_int(str):
         """
@@ -82,3 +101,21 @@ class BiointeractParser(object):
             return float(str)
         except ValueError:
             return 0
+
+    @staticmethod
+    def sweep_record(r):
+        """
+        Remove all None fields from a record
+        :param r:
+        :return:
+        """
+        r2 = {}
+        for k1 in r.keys():
+            if isinstance(r[k1], dict):
+                r2[k1] = {}
+                for k2 in r[k1]:
+                    if r[k1][k2]:
+                        r2[k1][k2] = r[k1][k2]
+            elif r[k1]:
+                r2[k1] = r[k1]
+        return r2

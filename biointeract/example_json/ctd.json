@@ -23,7 +23,8 @@
       'pubmedids': [
         19502547
       ],
-      'direction': 'A->B'
+      'direction': 'A->B',
+      '_license': 'https://goo.gl/pLRNT8'
     }
   ]
 }

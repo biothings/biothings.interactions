@@ -100,6 +100,10 @@ class CTDChemGeneParser(BiointeractParser):
                         r['interactor_b'] = c['interactor_a']
                         c.pop('interactor_a')
                         c.pop('interactor_b')
+
+                    # Add the license information
+                    c["_license"] = "https://goo.gl/pLRNT8"
+
                     abbreviated_cache.append(c)
 
             r['ctd'] = abbreviated_cache

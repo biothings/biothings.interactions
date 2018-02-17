@@ -10,8 +10,10 @@ http://ctdbase.org/downloads/;jsessionid=0BD8D8C07B7661002359C02D7C0275F8
 Source Project:   biothings.interactions
 Author:  Greg Taylor:  greg.k.taylor@gmail.com
 """
-import re
+import json
+import logging
 import operator
+import re
 
 from hub.dataload.BiointeractParser import BiointeractParser
 from biothings.utils.dataload import dict_sweep
@@ -77,36 +79,64 @@ class CTDChemGeneParser(BiointeractParser):
                 else:
                     cache[id] = [r] + cache[id]
 
-        #########################################
-        # Transform cache from dictionary to list
-        #########################################
-        # The following code trnsforms the cache from a dictionary
-        # an abbreviate format with two interactors per record.
-        # Additional metadata is also included as a list
+        return CTDChemGeneParser.collapse_cache(cache)
+
+    @staticmethod
+    def collapse_cache(cache):
+        """
+        The following code trnsforms the cache from a dictionary
+        an abbreviate format with two interactors per record.
+        Additional metadata is also included as a list
+        :param cache:
+        :return:
+        """
         l = []
         for k in cache.keys():
             r = {}
             r['_id'] = k
             abbreviated_cache = []
+            abbreviated_cache_repr = []
+
+            # lists for interactors a and b that will be collapased
+            int_a_list = []
+            int_b_list = []
+
             for c in cache[k]:
                 if 'interactor_a' in c.keys() and 'interactor_b' in c.keys() and 'direction' in c.keys():
                     if c['direction'] == 'A->B':
-                        r['interactor_a'] = c['interactor_a']
-                        r['interactor_b'] = c['interactor_b']
+                        int_a_list.append(c['interactor_a'])
+                        int_b_list.append(c['interactor_b'])
                         c.pop('interactor_a')
                         c.pop('interactor_b')
                     if c['direction'] == 'B->A':
-                        r['interactor_a'] = c['interactor_b']
-                        r['interactor_b'] = c['interactor_a']
+                        int_a_list.append(c['interactor_b'])
+                        int_b_list.append(c['interactor_a'])
                         c.pop('interactor_a')
                         c.pop('interactor_b')
 
-                    # Add the license information
-                    c["_license"] = "https://goo.gl/pLRNT8"
-
-                    abbreviated_cache.append(c)
+                    c_repr = json.dumps(c, sort_keys=True)
+                    if c_repr not in abbreviated_cache_repr:
+                        abbreviated_cache.append(c)
+                        abbreviated_cache_repr.append(c_repr)
+                    else:
+                        # The following block looks for duplicates in the dataset and
+                        # logs an error if it finds them
+                        logging.error("An evidence entry for %s is represented more than once." % k)
 
             r['ctd'] = abbreviated_cache
+
+            # collapse int_a_list and int_b_list dictionaries
+            int_a = int_a_list[0]
+            for a in int_a_list:
+                if a != int_a:
+                    int_a = CTDChemGeneParser.combine_interactions(int_a, a)
+            int_b = int_b_list[0]
+            for b in int_b_list:
+                if b != int_b:
+                    int_b = CTDChemGeneParser.combine_interactions(int_b, b)
+            r['interactor_a'] = int_a
+            r['interactor_b'] = int_b
+
             yield r
 
     @staticmethod
@@ -153,3 +183,32 @@ class CTDChemGeneParser(BiointeractParser):
         else:
             id = None
         return id, r
+
+    @staticmethod
+    def combine_interactions(int1, int2):
+        """
+        Combine the elements in interation 2 into interaction 1.
+        The method comines all elements from the second dictionary into
+        the first.  The first dictionary contains either single elements
+        for unique properties or lists if multiple properties or lists of
+        properties need to be combined.
+        :param int1:
+        :param int2:
+        :return:
+        """
+        for k in int2.keys():
+            if k in int1.keys():
+                if int1[k] != int2[k]:
+                    if isinstance(int1[k], list):
+                        if isinstance(int2[k], list):
+                            for s in int2[k]:
+                                if s not in int1[k]:
+                                    int1[k].append(s)
+                        else:
+                            if int2[k] not in int1[k]:
+                                int1[k].append(int2[k])
+                    else:
+                        int1[k] = [int1[k], int2[k]]
+            else:
+                int1[k] = int2[k]
+        return int1

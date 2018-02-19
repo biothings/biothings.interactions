@@ -1,0 +1,128 @@
+{
+  'interactor_a': {
+    'ndex': 93563958
+  },
+  'interactor_b': {
+    'ndex': 93564476
+  },
+  'ndex': {
+    'cx_edge_id': 93573591,
+    'edge': {
+      '@id': 93573591,
+      's': 93563958,
+      't': 93564476,
+      'i': 'in-complex-with'
+    },
+    's': {
+      '@id': 93563958,
+      'n': 'CTNNB1'
+    },
+    'sa': [
+      {
+        'po': 93563958,
+        'n': 'alias',
+        'v': [
+          'uniprot knowledgebase:Q8NEW9',
+          'uniprot knowledgebase:P35222',
+          'uniprot knowledgebase:Q9H391',
+          'uniprot knowledgebase:Q8NI94',
+          'uniprot knowledgebase:A8K1L7',
+          'CTNB1_HUMAN'
+        ],
+        'd': 'list_of_string'
+      },
+      {
+        'po': 93563958,
+        'n': 'relatedTo',
+        'v': [
+          'uniprot:CTNB1_HUMAN',
+          'refseq:XP_005264943',
+          'refseq:NP_001091680',
+          'refseq:NP_001091679',
+          'refseq:XM_005264886',
+          'refseq:NP_001895',
+          'ensembl:ENSP00000385604',
+          'ensembl:ENSP00000379488',
+          'ensembl:ENST00000396183',
+          'ensembl:ENST00000349496',
+          'ensembl:ENSG00000168036',
+          'dip:DIP-122N',
+          'ensembl:ENSP00000379486',
+          'ensembl:ENSP00000344456',
+          'refseq:NM_001098209',
+          'ncbi gene:1499',
+          'refseq:NM_001904',
+          'refseq:NM_001098210',
+          'ensembl:ENST00000405570',
+          'ensembl:ENST00000396185',
+          'hgnc:HGNC:2514',
+          'hgnc symbol:CTNNB1'
+        ],
+        'd': 'list_of_string'
+      },
+      {
+        'po': 93563958,
+        'n': 'type',
+        'v': 'Protein'
+      }
+    ],
+    't': {
+      '@id': 93564476,
+      'n': 'LEF1'
+    },
+    'ta': [
+      {
+        'po': 93564476,
+        'n': 'alias',
+        'v': [
+          'LEF1_HUMAN',
+          'uniprot knowledgebase:B4DG38',
+          'uniprot knowledgebase:Q9UJU2',
+          'uniprot knowledgebase:B7Z8E2',
+          'uniprot knowledgebase:E9PDK3',
+          'uniprot knowledgebase:Q3ZCU4',
+          'uniprot knowledgebase:Q9HAZ0'
+        ],
+        'd': 'list_of_string'
+      },
+      {
+        'po': 93564476,
+        'n': 'relatedTo',
+        'v': [
+          'uniprot:LEF1_HUMAN',
+          'refseq:NP_001124185',
+          'refseq:NP_001124186',
+          'refseq:NP_001159591',
+          'refseq:NP_057353',
+          'dip:DIP-29946N',
+          'ensembl:ENSG00000138795',
+          'ensembl:ENSP00000265165',
+          'ensembl:ENST00000265165',
+          'ensembl:ENST00000379951',
+          'ensembl:ENST00000438313',
+          'ensembl:ENST00000506680',
+          'ensembl:ENSP00000369284',
+          'ensembl:ENSP00000406176',
+          'ensembl:ENSP00000422334',
+          'ensembl:ENSP00000422840',
+          'refseq:NM_001130713',
+          'refseq:NM_001130714',
+          'refseq:NM_001166119',
+          'refseq:NM_016269',
+          'ensembl:ENST00000510624',
+          'hgnc symbol:LEF1',
+          'hgnc:HGNC:6551',
+          'ncbi gene:51176'
+        ],
+        'd': 'list_of_string'
+      },
+      {
+        'po': 93564476,
+        'n': 'type',
+        'v': 'Protein'
+      }
+    ]
+  },
+  'direction': 'A->B',
+  '_id': 'ndex:93563958-ndex:93564476'
+}

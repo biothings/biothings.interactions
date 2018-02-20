@@ -13,7 +13,6 @@ setup(name='biointeract',
       license='Apache License Version 2.0',
       packages=['biointeract'],
       install_requires=[
-          'biopython',
       ],
       zip_safe=False)
 

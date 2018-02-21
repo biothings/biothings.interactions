@@ -1,0 +1,51 @@
+db.src_build_config.insert({"_id": "test", "name": "test", "doc_type": "test_doc_type", "root": ["CTD_chem_gene_ixns"], "sources": ["CTD_chem_gene_ixns"]})
+
+test_20180221_uiukgetc
+
+# Number of records per identifier
+db.test_20180221_uiukgetc.aggregate( [
+  { $project: { numRefs: { $size: "$ctd" } }},
+  { $group: {_id: "$numRefs", count: {$sum: 1}}},
+  { $sort : {"_id" : 1} },
+  { $out: "ids"}
+])
+mongoexport --db biothings_data_target --collection ids --type=csv --fields _id,count --out ~/ids.csv
+
+# Number of records per gene
+db.test_20180221_uiukgetc.aggregate( [
+  { $project: { interactors: [ "$interactor_a.entrezgene"] } },
+  { $unwind: "$interactors"},
+  { $group: {"_id": "$interactors", recPerGene: {$sum: 1}}},
+  { $group: {"_id": "$recPerGene", numGenes: {$sum: 1}}},
+  { $sort : {"numGenes" : -1} },
+  { $out: "genes"}
+] )
+mongoexport --db biothings_data_target --collection genes --type=csv --fields _id,numGenes --out ~/genes.csv
+
+
+# Number of records per chemical
+db.test_20180221_uiukgetc.aggregate( [
+  { $project: { interactors: [ "$interactor_b.mesh"] } },
+  { $unwind: "$interactors"},
+  { $group: {"_id": "$interactors", recPerChem: {$sum: 1}}},
+  { $group: {"_id": "$recPerChem", numChems: {$sum: 1}}},
+  { $sort : {"_id" : -1} },
+  { $out: "chems"}
+] )
+mongoexport --db biothings_data_target --collection chems --type=csv --fields _id,numChems --out ~/chems.csv
+
+# Number of genes
+db.test_20180221_uiukgetc.aggregate( [
+  { $project: { interactors: [ "$interactor_a.entrezgene"] } },
+  { $unwind: "$interactors"},
+  { $group: {"_id": "$interactors", recPerGene: {$sum: 1}}},
+  { $out: "temp"}
+] )
+
+# Number of chemicals
+db.test_20180221_uiukgetc.aggregate( [
+  { $project: { interactors: [ "$interactor_b.mesh"] } },
+  { $unwind: "$interactors"},
+  { $group: {"_id": "$interactors", recPerGene: {$sum: 1}}},
+  { $out: "temp"}
+] )

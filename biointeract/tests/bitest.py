@@ -56,7 +56,10 @@ class BITest(unittest.TestCase):
         for _r in records:
             for _f in _r[evidence]:
                 if field in _f:
-                    count = count + len(_f[field])
+                    if isinstance(_f[field], list):
+                        count = count + len(_f[field])
+                    else:
+                        count = count + 1
         return count
 
     def _list_average(self, cpd, evidence, field):

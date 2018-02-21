@@ -25,10 +25,14 @@ class CTDChemGeneParser(BiointeractParser):
 
     # all default field names are ok
     rename_map = {
+        'Organism': 'tax',
+        'OrganismID': 'taxid',
+        'PubMedIDs': 'pubmed',
+        'ChemicalID': 'mesh'
     }
 
     int_fields = [
-        'pubmedids'
+        'pubmed'
     ]
     ###############################################################
     # Fields to be grouped into single documents within each record
@@ -40,7 +44,7 @@ class CTDChemGeneParser(BiointeractParser):
     }
     interactor_B_fields = {
         'chemicalname': 'chemicalname',
-        'chemicalid': 'chemicalid',
+        'mesh': 'mesh',
         'casrn': 'casrn'
     }
 
@@ -152,12 +156,15 @@ class CTDChemGeneParser(BiointeractParser):
 
         r = CTDChemGeneParser.rename_fields(r, CTDChemGeneParser.rename_map)
 
-
         r['geneforms'] = CTDChemGeneParser.parse_list(r['geneforms'], CTDChemGeneParser.SEPARATOR)
         r['interactionactions'] = CTDChemGeneParser.parse_list(r['interactionactions'], CTDChemGeneParser.SEPARATOR)
 
-        r['pubmedids'] = CTDChemGeneParser.parse_list(r['pubmedids'], CTDChemGeneParser.SEPARATOR)
-        r['pubmedids'] = [CTDChemGeneParser.safe_int(x) for x in r['pubmedids']]
+        # parse the pubmed fields
+        r['pubmed'] = CTDChemGeneParser.parse_list(r['pubmed'], CTDChemGeneParser.SEPARATOR)
+        if isinstance(r['pubmed'], list):
+            r['pubmed'] = [CTDChemGeneParser.safe_int(x) for x in r['pubmed']]
+        else:
+            r['pubmed'] = CTDChemGeneParser.safe_int(r['pubmed'])
 
         r = CTDChemGeneParser.group_fields(r, 'interactor_a', CTDChemGeneParser.interactor_A_fields)
         r = CTDChemGeneParser.group_fields(r, 'interactor_b', CTDChemGeneParser.interactor_B_fields)
@@ -175,9 +182,9 @@ class CTDChemGeneParser(BiointeractParser):
         :param r:
         :return:
         """
-        if 'entrezgene' in r['interactor_a'].keys() and 'chemicalid' in r['interactor_b'].keys():
+        if 'entrezgene' in r['interactor_a'].keys() and 'mesh' in r['interactor_b'].keys():
             id_a = int(r['interactor_a']['entrezgene'])
-            id_b = r['interactor_b']['chemicalid']
+            id_b = r['interactor_b']['mesh']
             id = 'entrezgene:{0}-mesh:{1}'.format(id_a, id_b)
             r['direction'] = 'A->B'
         else:

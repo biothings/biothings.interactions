@@ -22,9 +22,15 @@ class BiointeractParser(object):
         The resulting strings will be returned,
         :param entry: a string representing the list
         :param separator: the deliminator for the list
-        :return: list of strings
+        :return: list of strings, single element, or None
         """
-        return [x for x in entry.split(separator)] if entry else None
+        r = [x for x in entry.split(separator)] if entry else None
+
+        # for lists with only a single element, return just the element
+        if isinstance(r, list) and len(r) == 1:
+            return r[0]
+        else:
+            return r
 
     @staticmethod
     def group_fields(r, group_name, fields):

@@ -2,57 +2,49 @@
   '_id': 'entrezgene:4254-mesh:C552819',
   'ctd': [
     {
-      'organism': 'Homo sapiens',
-      'organismid': '9606',
+      'tax': 'Homo sapiens',
+      'taxid': '9606',
       'interaction': '10-(octyloxy)decyl-2-(trimethylammonium)ethyl phosphate inhibits the reaction [[IL3 protein co-treated with CSF2 protein co-treated with FLT3LG protein co-treated with KITLG protein] results in increased phosphorylation of RPS6 protein]',
       'interactionactions': [
         'affects^cotreatment',
         'decreases^reaction',
         'increases^phosphorylation'
       ],
-      'pubmedids': [
-        23001822
-      ],
+      'pubmed': 23001822,
       'direction': 'A->B'
     },
     {
-      'organism': 'Homo sapiens',
-      'organismid': '9606',
+      'tax': 'Homo sapiens',
+      'taxid': '9606',
       'interaction': '10-(octyloxy)decyl-2-(trimethylammonium)ethyl phosphate inhibits the reaction [[IL3 protein co-treated with CSF2 protein co-treated with FLT3LG protein co-treated with KITLG protein] results in increased phosphorylation of AKT1 protein]',
       'interactionactions': [
         'affects^cotreatment',
         'decreases^reaction',
         'increases^phosphorylation'
       ],
-      'pubmedids': [
-        23001822
-      ],
+      'pubmed': 23001822,
       'direction': 'A->B'
     },
     {
-      'organism': 'Homo sapiens',
-      'organismid': '9606',
+      'tax': 'Homo sapiens',
+      'taxid': '9606',
       'interaction': '10-(octyloxy)decyl-2-(trimethylammonium)ethyl phosphate inhibits the reaction [[IL3 protein co-treated with CSF2 protein co-treated with FLT3LG protein co-treated with KITLG protein] results in increased expression of LAT2 protein]',
       'interactionactions': [
         'affects^cotreatment',
         'decreases^reaction',
         'increases^expression'
       ],
-      'pubmedids': [
-        23001822
-      ],
+      'pubmed': 23001822,
       'direction': 'A->B'
     }
   ],
   'interactor_a': {
     'symbol': 'KITLG',
     'entrezgene': '4254',
-    'geneforms': [
-      'protein'
-    ]
+    'geneforms': 'protein'
   },
-  'interacotr_b': {
+  'interactor_b': {
     'chemicalname': '10-(octyloxy)decyl-2-(trimethylammonium)ethyl phosphate',
-    'chemicalid': 'C552819'
+    'mesh': 'C552819'
   }
 }

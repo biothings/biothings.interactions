@@ -1,11 +1,11 @@
 """
-BiogridParser parses the biogrid data file and yields
+BiogridParser parses the HiNT data file and yields
 a generated dictionary of record values.
 
-For a description of the BIOGRID file format see the
+For a description of the HiNT file format see the
 following link:
 
-https://wiki.thebiogrid.org/doku.php/biogrid_tab_version_2.0
+http://hint.yulab.org/download/HomoSapiens/binary/hq/
 
 Source Project:   biothings.interactions
 Author:  Greg Taylor:  greg.k.taylor@gmail.com
@@ -48,7 +48,7 @@ class HiNTParser(BiointeractParser):
     @staticmethod
     def parse_tsv_file(f):
         """
-        Parse a tab-separated biogrid file opened in binary mode.
+        Parse a tab-separated hint file opened in binary mode.
         :param f: file opened for reading in binary mode
         :return: yields a generator of parsed objects
         """

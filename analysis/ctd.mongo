@@ -49,3 +49,30 @@ db.test_20180221_uiukgetc.aggregate( [
   { $group: {"_id": "$interactors", recPerGene: {$sum: 1}}},
   { $out: "temp"}
 ] )
+
+# Number of publications
+db.test_20180221_uiukgetc.aggregate( [
+  { $project: { pubs: [ "$ctd.pubmed"], post_id: "$_id"} },
+  { $unwind: { path: "$pubs", preserveNullAndEmptyArrays: false }},
+  { $unwind: { path: "$pubs", preserveNullAndEmptyArrays: false }},
+  { $unwind: { path: "$pubs", preserveNullAndEmptyArrays: false }},
+  {$group: {
+        _id: "$pubs"
+    }},
+  { $out: "pubs"}
+  ],
+  { allowDiskUse: true }
+)
+
+# Number of taxids
+db.test_20180221_uiukgetc.aggregate( [
+  { $project: { taxid: [ "$ctd.taxid"], post_id: "$_id"} },
+  { $unwind: { path: "$taxid", preserveNullAndEmptyArrays: false }},
+  { $unwind: { path: "$taxid", preserveNullAndEmptyArrays: false }},
+  {$group: {
+        _id: "$taxid"
+    }},
+  { $out: "taxid"}
+  ],
+  { allowDiskUse: true }
+)

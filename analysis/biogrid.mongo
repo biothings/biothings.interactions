@@ -1,0 +1,50 @@
+# src_build_config entry for merging
+db.src_build_config.insert({"_id": "test", "name": "test", "doc_type": "test_doc_type", "root": ["biogrid"], "sources": ["biogrid", "hint"]})
+
+# Number of records per id
+db.test_20180205_vamouwvm.aggregate( [
+  { $project: { numRefs: { $size: "$biogrid" } }},
+  { $group: {_id: "$numRefs", count: {$sum: 1}}},
+  { $sort : {"_id" : 1} },
+  { $out: "ids"}
+])
+
+mongoexport --db biothings_data_target --collection genes --type=csv --fields _id,count --out ~/ids.csv
+
+# Number of records per gene
+db.test_20180205_vamouwvm.aggregate( [
+  { $project: { interactors: [ "$interactor_a.entrezgene", "$interactor_b.entrezgene" ] } },
+  { $unwind: "$interactors"},
+  { $group: {"_id": "$interactors", recPerGene: {$sum: 1}}},
+  { $group: {"_id": "$recPerGene", numGenes: {$sum: 1}}},
+  { $sort : {"numGenes" : -1} },
+  { $out: "genes"}
+] )
+
+mongoexport --db biothings_data_target --collection genes --type=csv --fields _id,count --out ~/genes.csv
+
+# Number of Interactors (genes)
+db.test_20180205_vamouwvm.aggregate( [
+  { $project: { _id: 0, interactors: [ "$interactor_a.entrezgene", "$interactor_b.entrezgene" ] } },
+  { $unwind: "$interactors"},
+  { $out: "interactors"}
+])
+
+> db.interactors.count()
+2537550
+
+# Number of Unique Genes
+db.interactors.aggregate( [
+  { $group: {"_id": "$interactors", recPerGene: {$sum: 1}}},
+  { $out: "genes"}
+] )
+
+> db.genes.count()
+67633
+
+# Number of Records Per Gene
+db.genes.aggregate( [
+  { $group: {"_id": "$recPerGene", numGenes: {$sum: 1}}},
+  { $sort : {"numGenes" : -1} },
+  { $out: "records"}
+] )

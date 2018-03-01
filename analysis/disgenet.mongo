@@ -1,0 +1,39 @@
+db.src_build_config.insert({"_id": "test", "name": "test", "doc_type": "test_doc_type", "root": ["disgenet"], "sources": ["disgenet"]})
+
+# Number of records per gene
+db.test_20180301_8xbyladf.aggregate( [
+  { $project: { interactors: [ "$interactor_a.entrezgene"] } },
+  { $unwind: "$interactors"},
+  { $group: {"_id": "$interactors", recPerGene: {$sum: 1}}},
+  { $group: {"_id": "$recPerGene", numGenes: {$sum: 1}}},
+  { $sort : {"numGenes" : -1} },
+  { $out: "genes"}
+] )
+mongoexport --db biothings_data_target --collection genes --type=csv --fields _id,numGenes --out ~/genes.csv
+
+# Number of records per disease
+db.test_20180301_8xbyladf.aggregate( [
+  { $project: { interactors: [ "$interactor_b.mesh"] } },
+  { $unwind: "$interactors"},
+  { $group: {"_id": "$interactors", recPerDis: {$sum: 1}}},
+  { $group: {"_id": "$recPerDis", numDis: {$sum: 1}}},
+  { $sort : {"_id" : -1} },
+  { $out: "chems"}
+] )
+mongoexport --db biothings_data_target --collection chems --type=csv --fields _id,numChems --out ~/chems.csv
+
+# Number of genes
+db.test_20180301_8xbyladf.aggregate( [
+  { $project: { interactors: [ "$interactor_a.entrezgene"] } },
+  { $unwind: "$interactors"},
+  { $group: {"_id": "$interactors", recPerGene: {$sum: 1}}},
+  { $out: "temp"}
+] )
+
+# Number of diseases
+db.test_20180301_8xbyladf.aggregate( [
+  { $project: { interactors: [ "$interactor_b.mesh"] } },
+  { $unwind: "$interactors"},
+  { $group: {"_id": "$interactors", recPerGene: {$sum: 1}}},
+  { $out: "temp"}
+] )

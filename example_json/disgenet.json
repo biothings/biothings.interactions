@@ -1,0 +1,18 @@
+{
+  '_id': 'entrezgene:10000-mesh:C0917816',
+  'disgenet': [
+    {
+      'score': 0.2,
+      'source': 'HPO',
+      'direction': 'A->B'
+    }
+  ],
+  'interactor_a': {
+    'symbol': 'AKT3',
+    'entrezgene': '10000'
+  },
+  'interactor_b': {
+    'mesh': 'C0917816',
+    'diseasename': 'Mental deficiency'
+  }
+}

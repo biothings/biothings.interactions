@@ -12,6 +12,18 @@ class BITest(unittest.TestCase):
     Test class for generic parser functions.
     """
 
+    def _average(self, records, evidence, field):
+        """
+        Compute the average over the test dataset for a given record field
+        in the evidence dictionaries.
+        :param records:
+        :param field:
+        :return:
+        """
+        # Number of records with non-null values
+        total = self._total(records, evidence, field)
+        return total / len(records)
+
     def _num_values(self, records, evidence, field):
         """
         Compute the total number of non NoneType values for a field in a given record
@@ -40,7 +52,7 @@ class BITest(unittest.TestCase):
         total = 0
         for _r in records:
             for _f in _r[evidence]:
-                if _f[field]:
+                if field in _f and _f[field]:
                     total = total + _f[field]
         return total
 

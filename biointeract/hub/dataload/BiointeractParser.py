@@ -33,6 +33,21 @@ class BiointeractParser(object):
             return r
 
     @staticmethod
+    def parse_int_list(entry, separator):
+        """
+        Parse a string entry into a list of integers.
+        :param entry: a string representing the list
+        :param separator: the deliminator for the list
+        :return: list of integers, single integer, or None
+        """
+        r = BiointeractParser.parse_list(entry, separator)
+        if isinstance(r, list):
+            r = [BiointeractParser.safe_int(x) for x in r]
+        else:
+            r = BiointeractParser.safe_int(r)
+        return r
+
+    @staticmethod
     def group_fields(r, group_name, fields):
         """
         Given a dictionary r, group all fields 'fields' together into a dictionary

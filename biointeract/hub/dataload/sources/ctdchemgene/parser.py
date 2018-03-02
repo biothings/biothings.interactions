@@ -88,7 +88,7 @@ class CTDChemGeneParser(BiointeractParser):
     @staticmethod
     def collapse_cache(cache):
         """
-        The following code trnsforms the cache from a dictionary
+        The following code transforms the cache from a dictionary
         an abbreviate format with two interactors per record.
         Additional metadata is also included as a list
         :param cache:
@@ -118,6 +118,9 @@ class CTDChemGeneParser(BiointeractParser):
                         c.pop('interactor_a')
                         c.pop('interactor_b')
 
+                    if not c['interactionactions'] == 'affects^binding':
+                        continue
+
                     c_repr = json.dumps(c, sort_keys=True)
                     if c_repr not in abbreviated_cache_repr:
                         abbreviated_cache.append(c)
@@ -141,6 +144,9 @@ class CTDChemGeneParser(BiointeractParser):
             r['interactor_a'] = int_a
             r['interactor_b'] = int_b
 
+            if not r['ctd']:
+                continue
+
             yield r
 
     @staticmethod
@@ -158,13 +164,7 @@ class CTDChemGeneParser(BiointeractParser):
 
         r['geneforms'] = CTDChemGeneParser.parse_list(r['geneforms'], CTDChemGeneParser.SEPARATOR)
         r['interactionactions'] = CTDChemGeneParser.parse_list(r['interactionactions'], CTDChemGeneParser.SEPARATOR)
-
-        # parse the pubmed fields
-        r['pubmed'] = CTDChemGeneParser.parse_list(r['pubmed'], CTDChemGeneParser.SEPARATOR)
-        if isinstance(r['pubmed'], list):
-            r['pubmed'] = [CTDChemGeneParser.safe_int(x) for x in r['pubmed']]
-        else:
-            r['pubmed'] = CTDChemGeneParser.safe_int(r['pubmed'])
+        r['pubmed'] = CTDChemGeneParser.parse_int_list(r['pubmed'], CTDChemGeneParser.SEPARATOR)
 
         r = CTDChemGeneParser.group_fields(r, 'interactor_a', CTDChemGeneParser.interactor_A_fields)
         r = CTDChemGeneParser.group_fields(r, 'interactor_b', CTDChemGeneParser.interactor_B_fields)

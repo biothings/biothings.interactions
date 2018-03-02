@@ -1,14 +1,15 @@
 {
-  '_id': 'uniprot:A2RU14-uniprot:P12004',
   'interactor_a': {
-    'uniprot': 'A2RU14',
-    'gene': 'TMEM218',
-    'alias': 'HGNC:27344'
+    'uniprot': 'A1L4K1',
+    'gene': 'FSD2',
+    'alias': 'HGNC:18024',
+    'entrezgene': 123722
   },
   'interactor_b': {
-    'uniprot': 'P12004',
-    'gene': 'PCNA',
-    'alias': 'HGNC:8729'
+    'uniprot': 'Q9H0A9',
+    'gene': 'SPATC1L',
+    'alias': 'HGNC:1298',
+    'entrezgene': 84221
   },
   'hint': [
     {
@@ -30,11 +31,17 @@
         },
         {
           'pmid': '25416956',
+          'method': '0231',
+          'quality': 'HT'
+        },
+        {
+          'pmid': '25416956',
           'method': '1356',
           'quality': 'HT'
         }
-      ],
-      'direction': 'A->B'
+      ]
     }
-  ]
+  ],
+  'direction': 'B->A',
+  '_id': 'entrezgene:84221-entrezgene:123722'
 }

@@ -1,0 +1,24 @@
+# src_build_config entry for merging
+db.src_build_config.insert({"_id": "test", "name": "test", "doc_type": "test_doc_type", "root": ["hint"], "sources": ["hint"]})
+
+# Number of records per id
+db.test_20180302_ro6znqe7.aggregate( [
+  { $project: { numRefs: { $size: "$hint" } }},
+  { $group: {_id: "$numRefs", count: {$sum: 1}}},
+  { $sort : {"_id" : 1} },
+  { $out: "ids"}
+])
+mongoexport --db biothings_data_target --collection ids --type=csv --fields _id,count --out ~/ids.csv
+
+
+# Number of records per gene
+db.test_20180302_ro6znqe7.aggregate( [
+  { $project: { interactors: [ "$interactor_a.entrezgene", "$interactor_b.entrezgene" ] } },
+  { $unwind: "$interactors"},
+  { $group: {"_id": "$interactors", recPerGene: {$sum: 1}}},
+  { $group: {"_id": "$recPerGene", numGenes: {$sum: 1}}},
+  { $sort : {"numGenes" : -1} },
+  { $out: "genes"}
+] )
+
+mongoexport --db biothings_data_target --collection genes --type=csv --fields _id,numGenes --out ~/genes.csv

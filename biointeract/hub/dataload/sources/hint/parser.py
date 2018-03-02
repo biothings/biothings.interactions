@@ -14,7 +14,7 @@ import re
 import operator
 
 from hub.dataload.BiointeractParser import BiointeractParser
-import requests
+import biothings_client
 
 
 class HiNTParser(BiointeractParser):
@@ -53,7 +53,7 @@ class HiNTParser(BiointeractParser):
         :return: yields a generator of parsed objects
         """
 
-        cache = {}
+        result = []
 
         for (i, line) in enumerate(f):
             # If the line returned is byptes instead
@@ -73,39 +73,14 @@ class HiNTParser(BiointeractParser):
                 for (pos, val) in enumerate(line.split('\t')):
                     _r[header_dict[pos]] = val
                 id, r = HiNTParser.parse_tsv_line(i, _r)
+                result.append(r)
 
-                # Add the id and record to the cache
-                if id not in cache.keys():
-                    cache[id] = [r]
-                else:
-                    cache[id] = [r] + cache[id]
+        result = HiNTParser.extract_interactors(result)
+        result = HiNTParser.replace_uniprot_entrez(result)
+        result = HiNTParser.collapse_duplicate_keys(result)
 
-        #########################################
-        # Transform cache from dictionary to list
-        #########################################
-        # The following code transforms the cache from a dictionary
-        # an abbreviate format with two interactors per record.
-        # Additional metadata is also included as a list
-        l = []
-        for k in cache.keys():
-            r = {}
-            r['_id'] = k
-            abbreviated_cache = []
-            for c in cache[k]:
-                if 'interactor_a' in c.keys() and 'interactor_b' in c.keys() and 'direction' in c.keys():
-                    if c['direction'] == 'A->B':
-                        r['interactor_a'] = c['interactor_a']
-                        r['interactor_b'] = c['interactor_b']
-                        c.pop('interactor_a')
-                        c.pop('interactor_b')
-                    if c['direction'] == 'B->A':
-                        r['interactor_a'] = c['interactor_b']
-                        r['interactor_b'] = c['interactor_a']
-                        c.pop('interactor_a')
-                        c.pop('interactor_b')
-                    abbreviated_cache.append(c)
-
-            r['hint'] = abbreviated_cache
+        # Finally, return the result
+        for r in result:
             yield r
 
     @staticmethod
@@ -121,12 +96,11 @@ class HiNTParser(BiointeractParser):
 
         r = HiNTParser.rename_fields(r, HiNTParser.rename_map)
         r = HiNTParser.parse_evidence(r)
-        id, r = HiNTParser.set_id(r)
         r = HiNTParser.group_fields(r, 'interactor_a', HiNTParser.interactor_A_fields)
         r = HiNTParser.group_fields(r, 'interactor_b', HiNTParser.interactor_B_fields)
         r = HiNTParser.sweep_record(r)
 
-        return id, r
+        return None, r
 
     @staticmethod
     def parse_evidence(r):
@@ -151,47 +125,106 @@ class HiNTParser(BiointeractParser):
         :param r:
         :return:
         """
-        if 'uniprot_a' in r.keys() and 'uniprot_b' in r.keys():
+        curie_a = 'entrezgene'
+        id_a = r['interactor_a']['entrezgene']
+        curie_b = 'entrezgene'
+        id_b = r['interactor_b']['entrezgene']
 
-            curie_a, entrez_a = HiNTParser.uniprot_to_entrez(r['uniprot_a'])
-            curie_b, entrez_b = HiNTParser.uniprot_to_entrez(r['uniprot_b'])
+        r['interactor_a']['entrezgene'] = id_a
+        r['interactor_b']['entrezgene'] = id_b
 
-            if curie_a == 'entrezgene':
-                r['entrezgene_a'] = entrez_a
-            if curie_b == 'entrezgene':
-                r['entrezgene_b'] = entrez_b
-
-            if str(entrez_a) < str(entrez_b):
-                id = '{0}:{1}-{2}:{3}'.format(curie_a, entrez_a, curie_b, entrez_b)
-                r['direction'] = 'A->B'
-            else:
-                id = '{0}:{1}-{2}:{3}'.format(curie_b, entrez_b, curie_a, entrez_a)
-                r['direction'] = 'B->A'
+        if id_a < id_b:
+            id = '{0}:{1}-{2}:{3}'.format(curie_a, id_a, curie_b, id_b)
+            r['direction'] = 'A->B'
         else:
-            id = None
+            id = '{0}:{1}-{2}:{3}'.format(curie_b, id_b, curie_a, id_a)
+            r['direction'] = 'B->A'
 
+        # set the id and return
+        r['_id'] = id
         return id, r
 
     @staticmethod
-    def uniprot_to_entrez(uniprot):
+    def build_entrezgenes(result_list):
         """
-        Convert a uniprot identifer to an entrezgene identifier if possible.  The
-        curie prefix and the identifier is returned.  When converting the identifier
-        the mygene.info server is used.  If the conversion fails then the uniprot
-        curie and identifier is returned.
-        :param uniprot: uniprot identifier
+        Build a dictionary of entrezgenes for each uniprot
+        :param uniprots:
         :return:
         """
-        # payload = {'q': uniprot}
-        # id_r = requests.get('http://mygene.info/v3/query', params=payload)
-        # if id_r.json()['hits']:
-        #     curie = 'entrezgene'
-        #     id = id_r.json()['hits'][0]['entrezgene']
-        # else:
-        #     curie = 'uniprot'
-        #     id = uniprot
+        # Build the set of Uniprot entries to query
+        uniprots = set()
+        for r in result_list:
+            uniprots.add(r['interactor_a']['uniprot'])
+            uniprots.add(r['interactor_b']['uniprot'])
 
-        curie = 'uniprot'
-        id = uniprot
+        # Query MyGene.info
+        mg = biothings_client.get_client('gene')
+        qr = mg.querymany(list(uniprots), scopes='uniprot', species='human')
 
-        return curie, id
+        # Build the Entrezgene dictionary to return
+        entrezgenes = {}
+        for q in qr:
+            if 'query' in q and 'entrezgene' in q:
+                entrezgenes[q['query']] = q['entrezgene']
+        return entrezgenes
+
+    @staticmethod
+    def extract_interactors(result_list):
+        """
+        Pull out interactor_a / interactor_b
+        :param result_list:
+        :return:
+        """
+        mod_result = []
+        for k in result_list:
+            r = {}
+            r['interactor_a'] = k['interactor_a']
+            r['interactor_b'] = k['interactor_b']
+            k.pop('interactor_a')
+            k.pop('interactor_b')
+            r['hint'] = [k]
+            mod_result.append(r)
+        return mod_result
+
+    @staticmethod
+    def replace_uniprot_entrez(result_list):
+        """
+        Analyze the result set for uniprot ids that will be translated to
+        entrezgene ids.
+        :param result_list:
+        :return:
+        """
+        entrezgenes = HiNTParser.build_entrezgenes(result_list)
+        pruned_result = []
+        for r in result_list:
+            # Entrezgene entries must be available for both interactor_a and interactor_b
+            if r['interactor_a']['uniprot'] in entrezgenes:
+                if r['interactor_b']['uniprot'] in entrezgenes:
+                    r['interactor_a']['entrezgene'] = entrezgenes[r['interactor_a']['uniprot']]
+                    r['interactor_b']['entrezgene'] = entrezgenes[r['interactor_b']['uniprot']]
+                    id, r = HiNTParser.set_id(r)
+                    pruned_result.append(r)
+        return pruned_result
+
+    @staticmethod
+    def collapse_duplicate_keys(result_list):
+        """
+        Collapse duplicate keys
+        :param result_list:
+        :return:
+        """
+        # Add the id and record to the cache
+        cache = {}
+        for r in result_list:
+            id = r['_id']
+            if id not in cache.keys():
+                cache[id] = r
+            else:
+                cache[id]['hint'] = cache[id]['hint'] + r['hint']
+
+        # transforms the cache back to a list
+        pruned_result = []
+        for k in cache.keys():
+            pruned_result.append(cache[k])
+
+        return pruned_result

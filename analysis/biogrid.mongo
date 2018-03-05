@@ -9,7 +9,7 @@ db.test_20180205_vamouwvm.aggregate( [
   { $out: "ids"}
 ])
 
-mongoexport --db biothings_data_target --collection genes --type=csv --fields _id,count --out ~/ids.csv
+mongoexport --db biothings_data_target --collection ids --type=csv --fields _id,count --out ~/ids.csv
 
 # Number of records per gene
 db.test_20180205_vamouwvm.aggregate( [

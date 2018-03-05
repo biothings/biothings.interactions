@@ -1,50 +1,23 @@
 {
-  '_id': 'entrezgene:4254-mesh:C552819',
+  '_id': 'entrezgene:213-mesh:C016614',
   'ctd': [
     {
-      'tax': 'Homo sapiens',
-      'taxid': '9606',
-      'interaction': '10-(octyloxy)decyl-2-(trimethylammonium)ethyl phosphate inhibits the reaction [[IL3 protein co-treated with CSF2 protein co-treated with FLT3LG protein co-treated with KITLG protein] results in increased phosphorylation of RPS6 protein]',
-      'interactionactions': [
-        'affects^cotreatment',
-        'decreases^reaction',
-        'increases^phosphorylation'
-      ],
-      'pubmed': 23001822,
-      'direction': 'A->B'
-    },
-    {
-      'tax': 'Homo sapiens',
-      'taxid': '9606',
-      'interaction': '10-(octyloxy)decyl-2-(trimethylammonium)ethyl phosphate inhibits the reaction [[IL3 protein co-treated with CSF2 protein co-treated with FLT3LG protein co-treated with KITLG protein] results in increased phosphorylation of AKT1 protein]',
-      'interactionactions': [
-        'affects^cotreatment',
-        'decreases^reaction',
-        'increases^phosphorylation'
-      ],
-      'pubmed': 23001822,
-      'direction': 'A->B'
-    },
-    {
-      'tax': 'Homo sapiens',
-      'taxid': '9606',
-      'interaction': '10-(octyloxy)decyl-2-(trimethylammonium)ethyl phosphate inhibits the reaction [[IL3 protein co-treated with CSF2 protein co-treated with FLT3LG protein co-treated with KITLG protein] results in increased expression of LAT2 protein]',
-      'interactionactions': [
-        'affects^cotreatment',
-        'decreases^reaction',
-        'increases^expression'
-      ],
-      'pubmed': 23001822,
+      'tax': 'Macaca mulatta',
+      'taxid': '9544',
+      'interaction': '1-nitronaphthalene metabolite binds to ALB protein',
+      'interactionactions': 'affects^binding',
+      'pubmed': 16453347,
       'direction': 'A->B'
     }
   ],
   'interactor_a': {
-    'symbol': 'KITLG',
-    'entrezgene': '4254',
+    'symbol': 'ALB',
+    'entrezgene': '213',
     'geneforms': 'protein'
   },
   'interactor_b': {
-    'chemicalname': '10-(octyloxy)decyl-2-(trimethylammonium)ethyl phosphate',
-    'mesh': 'C552819'
+    'chemicalname': '1-nitronaphthalene',
+    'mesh': 'C016614',
+    'casrn': '86-57-7'
   }
 }

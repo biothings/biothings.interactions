@@ -3,7 +3,7 @@ db.src_build_config.insert({"_id": "test", "name": "test", "doc_type": "test_doc
 test_20180221_uiukgetc
 
 # Number of records per identifier
-db.test_20180228_jhxbiemo.aggregate( [
+db.test_20180306_berrmnp2.aggregate( [
   { $project: { numRefs: { $size: "$ctd" } }},
   { $group: {_id: "$numRefs", count: {$sum: 1}}},
   { $sort : {"_id" : 1} },
@@ -12,7 +12,7 @@ db.test_20180228_jhxbiemo.aggregate( [
 mongoexport --db biothings_data_target --collection ids --type=csv --fields _id,count --out ~/ids.csv
 
 # Number of records per gene
-db.test_20180228_jhxbiemo.aggregate( [
+db.test_20180306_berrmnp2.aggregate( [
   { $project: { interactors: [ "$interactor_a.entrezgene"] } },
   { $unwind: "$interactors"},
   { $group: {"_id": "$interactors", recPerGene: {$sum: 1}}},
@@ -24,7 +24,7 @@ mongoexport --db biothings_data_target --collection genes --type=csv --fields _i
 
 
 # Number of records per chemical
-db.test_20180228_jhxbiemo.aggregate( [
+db.test_20180306_berrmnp2.aggregate( [
   { $project: { interactors: [ "$interactor_b.mesh"] } },
   { $unwind: "$interactors"},
   { $group: {"_id": "$interactors", recPerChem: {$sum: 1}}},
@@ -35,7 +35,7 @@ db.test_20180228_jhxbiemo.aggregate( [
 mongoexport --db biothings_data_target --collection chems --type=csv --fields _id,numChems --out ~/chems.csv
 
 # Number of genes
-db.test_20180228_jhxbiemo.aggregate( [
+db.test_20180306_berrmnp2.aggregate( [
   { $project: { interactors: [ "$interactor_a.entrezgene"] } },
   { $unwind: "$interactors"},
   { $group: {"_id": "$interactors", recPerGene: {$sum: 1}}},
@@ -43,7 +43,7 @@ db.test_20180228_jhxbiemo.aggregate( [
 ] )
 
 # Number of chemicals
-db.test_20180228_jhxbiemo.aggregate( [
+db.test_20180306_berrmnp2.aggregate( [
   { $project: { interactors: [ "$interactor_b.mesh"] } },
   { $unwind: "$interactors"},
   { $group: {"_id": "$interactors", recPerGene: {$sum: 1}}},
@@ -51,7 +51,7 @@ db.test_20180228_jhxbiemo.aggregate( [
 ] )
 
 # Number of publications
-db.test_20180228_jhxbiemo.aggregate( [
+db.test_20180306_berrmnp2.aggregate( [
   { $project: { pubs: [ "$ctd.pubmed"], post_id: "$_id"} },
   { $unwind: { path: "$pubs", preserveNullAndEmptyArrays: false }},
   { $unwind: { path: "$pubs", preserveNullAndEmptyArrays: false }},
@@ -65,7 +65,7 @@ db.test_20180228_jhxbiemo.aggregate( [
 )
 
 # Number of taxids
-db.test_20180228_jhxbiemo.aggregate( [
+db.test_20180306_berrmnp2.aggregate( [
   { $project: { taxid: [ "$ctd.taxid"], post_id: "$_id"} },
   { $unwind: { path: "$taxid", preserveNullAndEmptyArrays: false }},
   { $unwind: { path: "$taxid", preserveNullAndEmptyArrays: false }},

@@ -119,7 +119,7 @@ class CTDChemGeneParser(BiointeractParser):
                         c.pop('interactor_a')
                         c.pop('interactor_b')
 
-                    if not c['interactionactions'] == 'affects^binding':
+                    if isinstance(c['interactionactions'], list):
                         continue
 
                     c_repr = json.dumps(c, sort_keys=True)

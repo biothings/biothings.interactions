@@ -1,22 +1,23 @@
 {
-  '_id': 'entrezgene:36-mesh:C524733',
+  '_id': 'entrezgene:665-mesh:C025205',
   'ctd': [
     {
-      'tax': 'Mus musculus',
-      'taxid': 10090,
-      'interaction': '17-ethynyl-5-androstene-3, 7, 17-triol binds to ACADSB protein',
-      'interactionactions': 'affects^binding',
-      'pubmed': 22384159,
+      'tax': 'Homo sapiens',
+      'taxid': 9606,
+      'interaction': '1,10-phenanthroline results in decreased expression of BNIP3L mRNA',
+      'interactionactions': 'decreases^expression',
+      'pubmed': 19502547,
       'direction': 'A->B'
     }
   ],
   'interactor_a': {
-    'symbol': 'ACADSB',
-    'entrezgene': 36,
-    'geneforms': 'protein'
+    'symbol': 'BNIP3L',
+    'entrezgene': 665,
+    'geneforms': 'mRNA'
   },
   'interactor_b': {
-    'chemicalname': '17-ethynyl-5-androstene-3, 7, 17-triol',
-    'mesh': 'C524733'
+    'chemicalname': '1,10-phenanthroline',
+    'mesh': 'C025205',
+    'casrn': '66-71-7'
   }
 }

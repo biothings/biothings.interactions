@@ -78,7 +78,7 @@ class BiogridParser(BiointeractParser):
         :return: yields a generator of parsed objects
         """
 
-        cache = {}
+        result = []
 
         for (i, line) in enumerate(f):
             # If the line returned is byptes instead
@@ -98,39 +98,14 @@ class BiogridParser(BiointeractParser):
                 for (pos, val) in enumerate(line.split('\t')):
                     _r[header_dict[pos]] = val
                 id, r = BiogridParser.parse_biogrid_tsv_line(i, _r)
+                if r:
+                    result.append(r)
 
-                # Add the id and record to the cache
-                if id not in cache.keys():
-                    cache[id] = [r]
-                else:
-                    cache[id] = [r] + cache[id]
+        result = BiogridParser.extract_interactors(result, 'biogrid')
+        result = BiogridParser.collapse_duplicate_keys(result, 'biogrid')
 
-        #########################################
-        # Transform cache from dictionary to list
-        #########################################
-        # The following code trnsforms the cache from a dictionary
-        # an abbreviate format with two interactors per record.
-        # Additional metadata is also included as a list
-        l = []
-        for k in cache.keys():
-            r = {}
-            r['_id'] = k
-            abbreviated_cache = []
-            for c in cache[k]:
-                if 'interactor_a' in c.keys() and 'interactor_b' in c.keys() and 'direction' in c.keys():
-                    if c['direction'] == 'A->B':
-                        r['interactor_a'] = c['interactor_a']
-                        r['interactor_b'] = c['interactor_b']
-                        c.pop('interactor_a')
-                        c.pop('interactor_b')
-                    if c['direction'] == 'B->A':
-                        r['interactor_a'] = c['interactor_b']
-                        r['interactor_b'] = c['interactor_a']
-                        c.pop('interactor_a')
-                        c.pop('interactor_b')
-                    abbreviated_cache.append(c)
-
-            r['biogrid'] = abbreviated_cache
+        # return the results
+        for r in result:
             yield r
 
     @staticmethod
@@ -173,15 +148,24 @@ class BiogridParser(BiointeractParser):
         :param r:
         :return:
         """
-        if 'entrezgene' in r['interactor_a'].keys() and 'entrezgene' in r['interactor_b'].keys():
-            entrez_a = int(r['interactor_a']['entrezgene'])
-            entrez_b = int(r['interactor_b']['entrezgene'])
-            if entrez_a < entrez_b:
-                id = 'entrezgene:{0}-entrezgene:{1}'.format(entrez_a, entrez_b)
+        if 'entrezgene' in r['interactor_a'] and 'entrezgene' in r['interactor_b']:
+            curie_a = 'entrezgene'
+            id_a = int(r['interactor_a']['entrezgene'])
+            curie_b = 'entrezgene'
+            id_b = int(r['interactor_b']['entrezgene'])
+
+            r['interactor_a']['entrezgene'] = id_a
+            r['interactor_b']['entrezgene'] = id_b
+
+            if id_a < id_b:
+                id = '{0}:{1}-{2}:{3}'.format(curie_a, id_a, curie_b, id_b)
                 r['direction'] = 'A->B'
             else:
-                id = 'entrezgene:{0}-entrezgene:{1}'.format(entrez_b, entrez_a)
+                id = '{0}:{1}-{2}:{3}'.format(curie_b, id_b, curie_a, id_a)
                 r['direction'] = 'B->A'
+
+            # set the id and return
+            r['_id'] = id
+            return id, r
         else:
-            id = None
-        return id, r
+            return None, None

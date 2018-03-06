@@ -4,14 +4,15 @@
     'entrezgene': 10000
   },
   'interactor_b': {
-    'mesh': 'C0917816',
-    'diseasename': 'Mental deficiency'
+    'mesh': 'C1863924',
+    'diseasename': 'Megalanecephaly Polymicrogyria-Polydactyly Hydrocephalus Syndrome'
   },
-  '_id': 'entrezgene:10000-mesh:C0917816',
+  '_id': 'entrezgene:10000-mesh:C1863924',
   'disgenet': [
     {
       'score': 0.2,
-      'source': 'HPO',
+      'nofpmids': 1,
+      'source': 'CTD_human',
       'direction': 'A->B'
     }
   ]

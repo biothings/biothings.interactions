@@ -75,9 +75,9 @@ class HiNTParser(BiointeractParser):
                 id, r = HiNTParser.parse_tsv_line(i, _r)
                 result.append(r)
 
-        result = HiNTParser.extract_interactors(result)
+        result = HiNTParser.extract_interactors(result, 'hint')
         result = HiNTParser.replace_uniprot_entrez(result)
-        result = HiNTParser.collapse_duplicate_keys(result)
+        result = HiNTParser.collapse_duplicate_keys(result, 'hint')
 
         # Finally, return the result
         for r in result:
@@ -169,24 +169,6 @@ class HiNTParser(BiointeractParser):
         return entrezgenes
 
     @staticmethod
-    def extract_interactors(result_list):
-        """
-        Pull out interactor_a / interactor_b
-        :param result_list:
-        :return:
-        """
-        mod_result = []
-        for k in result_list:
-            r = {}
-            r['interactor_a'] = k['interactor_a']
-            r['interactor_b'] = k['interactor_b']
-            k.pop('interactor_a')
-            k.pop('interactor_b')
-            r['hint'] = [k]
-            mod_result.append(r)
-        return mod_result
-
-    @staticmethod
     def replace_uniprot_entrez(result_list):
         """
         Analyze the result set for uniprot ids that will be translated to
@@ -204,27 +186,4 @@ class HiNTParser(BiointeractParser):
                     r['interactor_b']['entrezgene'] = entrezgenes[r['interactor_b']['uniprot']]
                     id, r = HiNTParser.set_id(r)
                     pruned_result.append(r)
-        return pruned_result
-
-    @staticmethod
-    def collapse_duplicate_keys(result_list):
-        """
-        Collapse duplicate keys
-        :param result_list:
-        :return:
-        """
-        # Add the id and record to the cache
-        cache = {}
-        for r in result_list:
-            id = r['_id']
-            if id not in cache.keys():
-                cache[id] = r
-            else:
-                cache[id]['hint'] = cache[id]['hint'] + r['hint']
-
-        # transforms the cache back to a list
-        pruned_result = []
-        for k in cache.keys():
-            pruned_result.append(cache[k])
-
         return pruned_result

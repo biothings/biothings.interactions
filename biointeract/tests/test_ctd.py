@@ -33,5 +33,5 @@ class TestParserMethods(BITest):
         # Gather some useful statistics of the resulting dataset
         ########################################################
 
-        self.assertGreater(self._list_average(ctd, 'ctd', 'pubmed'), 1.5)
-        self.assertGreater(self._list_average(ctd, 'ctd', 'interactionactions'), 2)
+        self.assertGreater(self._list_average(ctd, 'ctd', 'pubmed'), 1.4)
+        self.assertGreater(self._list_average(ctd, 'ctd', 'interactionactions'), 1.2)

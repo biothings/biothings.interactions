@@ -14,10 +14,6 @@ from hub.dataload.BiointeractParser import BiointeractParser
 from biothings.utils.dataload import dict_sweep
 
 class DisGeNETParser(BiointeractParser):
-    # Static Constants
-    EMPTY_FIELD = 'n/a'
-    SEPARATOR = '|'
-
     # all default field names are ok
     rename_map = {
     }
@@ -47,7 +43,7 @@ class DisGeNETParser(BiointeractParser):
         :return: yields a generator of parsed objects
         """
 
-        cache = {}
+        result = []
 
         for (i, line) in enumerate(f):
             # If the line returned is byptes instead
@@ -68,64 +64,17 @@ class DisGeNETParser(BiointeractParser):
                     _r[header_dict[pos]] = val
                 id, r = DisGeNETParser.parse_tsv_line(i, _r)
 
-                # Add the id and record to the cache
-                if id not in cache.keys():
-                    cache[id] = [r]
-                else:
-                    cache[id] = [r] + cache[id]
+                # Add the id and record to the result list
+                if not '_id' in r:
+                    print(r)
+                    raise ValueError
+                result.append(r)
 
-        return DisGeNETParser.collapse_cache(cache)
+        result = DisGeNETParser.extract_interactors(result, 'disgenet')
+        result = DisGeNETParser.collapse_duplicate_keys(result, 'disgenet')
 
-    @staticmethod
-    def collapse_cache(cache):
-        """
-        The following code transforms the cache from a dictionary
-        an abbreviate format with two interactors per record.
-        Additional metadata is also included as a list
-        :param cache:
-        :return:
-        """
-        l = []
-        for k in cache.keys():
-            r = {}
-            r['_id'] = k
-            abbreviated_cache = []
-            abbreviated_cache_repr = []
-
-            # lists for interactors a and b that will be collapased
-            int_a_list = []
-            int_b_list = []
-
-            for c in cache[k]:
-                if 'interactor_a' in c.keys() and 'interactor_b' in c.keys() and 'direction' in c.keys():
-                    if c['direction'] == 'A->B':
-                        int_a_list.append(c['interactor_a'])
-                        int_b_list.append(c['interactor_b'])
-                        c.pop('interactor_a')
-                        c.pop('interactor_b')
-                    if c['direction'] == 'B->A':
-                        int_a_list.append(c['interactor_b'])
-                        int_b_list.append(c['interactor_a'])
-                        c.pop('interactor_a')
-                        c.pop('interactor_b')
-
-                    c_repr = json.dumps(c, sort_keys=True)
-                    if c_repr not in abbreviated_cache_repr:
-                        abbreviated_cache.append(c)
-                        abbreviated_cache_repr.append(c_repr)
-                    else:
-                        # The following block looks for duplicates in the dataset and
-                        # logs an error if it finds them
-                        logging.error("An evidence entry for %s is represented more than once." % k)
-
-            r['disgenet'] = abbreviated_cache
-
-            r['interactor_a'] = int_a_list[0]
-            r['interactor_b'] = int_b_list[0]
-
-            if not r['disgenet']:
-                continue
-
+        # return the results
+        for r in result:
             yield r
 
     @staticmethod
@@ -137,7 +86,7 @@ class DisGeNETParser(BiointeractParser):
         :return: a dictionary representing a parsed DisGeNET record
         """
         # Replace all empty fields with None
-        r = {k: v if v != DisGeNETParser.EMPTY_FIELD else None for k, v in line_dict.items()}
+        r = line_dict
 
         r = DisGeNETParser.rename_fields(r, DisGeNETParser.rename_map)
         r = DisGeNETParser.parse_int_fields(r, DisGeNETParser.int_fields)
@@ -166,4 +115,5 @@ class DisGeNETParser(BiointeractParser):
             r['direction'] = 'A->B'
         else:
             id = None
+        r['_id'] = id
         return id, r

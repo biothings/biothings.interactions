@@ -140,3 +140,49 @@ class BiointeractParser(object):
             elif r[k1]:
                 r2[k1] = r[k1]
         return r2
+
+    @staticmethod
+    def collapse_duplicate_keys(result_list, db_field):
+        """
+        Collapse duplicate keys
+        :param result_list:
+        :return:
+        """
+        # Add the id and record to the cache
+        cache = {}
+        print(len(result_list))
+
+        for r in result_list:
+            id = r['_id']
+            if id not in cache.keys():
+                cache[id] = r
+            else:
+                cache[id][db_field] = cache[id][db_field] + r[db_field]
+
+        # transforms the cache back to a list
+        pruned_result = []
+        for k in cache.keys():
+            pruned_result.append(cache[k])
+
+        return pruned_result
+
+    @staticmethod
+    def extract_interactors(result_list, db_field):
+        """
+        Pull out interactor_a / interactor_b
+        :param result_list:
+        :return:
+        """
+        mod_result = []
+        for k in result_list:
+            r = {}
+            r['interactor_a'] = k['interactor_a']
+            k.pop('interactor_a')
+            r['interactor_b'] = k['interactor_b']
+            k.pop('interactor_b')
+            if '_id' in k:
+                r['_id'] = k['_id']
+                k.pop('_id')
+            r[db_field] = [k]
+            mod_result.append(r)
+        return mod_result

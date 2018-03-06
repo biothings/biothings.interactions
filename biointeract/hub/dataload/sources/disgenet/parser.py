@@ -20,7 +20,8 @@ class DisGeNETParser(BiointeractParser):
 
     int_fields = [
         'nofpmids',
-        'nofsnps'
+        'nofsnps',
+        'geneid'
     ]
 
     ###############################################################

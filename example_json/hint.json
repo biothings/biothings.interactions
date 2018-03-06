@@ -1,47 +1,59 @@
 {
   'interactor_a': {
-    'uniprot': 'A1L4K1',
-    'gene': 'FSD2',
-    'alias': 'HGNC:18024',
-    'entrezgene': 123722
+    'uniprot': 'A4D0P7',
+    'gene': 'ORC5L',
+    'orf': 'HCG_16999|TCAG7.76',
+    'entrezgene': 5001
   },
   'interactor_b': {
-    'uniprot': 'Q9H0A9',
-    'gene': 'SPATC1L',
-    'alias': 'HGNC:1298',
-    'entrezgene': 84221
+    'uniprot': 'Q13415',
+    'gene': 'ORC1',
+    'alias': 'HGNC:8487',
+    'entrezgene': 4998
   },
   'hint': [
     {
       'evidence': [
         {
-          'pmid': '25416956',
-          'method': '1112',
+          'pmid': 15232106,
+          'method': 8,
           'quality': 'HT'
         },
         {
-          'pmid': '25416956',
-          'method': '0397',
+          'pmid': 15232106,
+          'method': 89,
           'quality': 'HT'
-        },
+        }
+      ]
+    },
+    {
+      'evidence': [
         {
-          'pmid': '25416956',
-          'method': '0018',
+          'pmid': 12614612,
+          'method': 18,
           'quality': 'HT'
-        },
+        }
+      ]
+    },
+    {
+      'evidence': [
         {
-          'pmid': '25416956',
-          'method': '0231',
+          'pmid': 15232106,
+          'method': 89,
           'quality': 'HT'
-        },
+        }
+      ]
+    },
+    {
+      'evidence': [
         {
-          'pmid': '25416956',
-          'method': '1356',
+          'pmid': 12614612,
+          'method': 18,
           'quality': 'HT'
         }
       ]
     }
   ],
   'direction': 'B->A',
-  '_id': 'entrezgene:84221-entrezgene:123722'
+  '_id': 'entrezgene:4998-entrezgene:5001'
 }

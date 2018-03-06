@@ -32,7 +32,8 @@ class CTDChemGeneParser(BiointeractParser):
     }
 
     int_fields = [
-        'pubmed'
+        'taxid',
+        'geneid'
     ]
     ###############################################################
     # Fields to be grouped into single documents within each record
@@ -161,6 +162,7 @@ class CTDChemGeneParser(BiointeractParser):
         r = {k: v if v != CTDChemGeneParser.EMPTY_FIELD else None for k, v in line_dict.items()}
 
         r = CTDChemGeneParser.rename_fields(r, CTDChemGeneParser.rename_map)
+        r = CTDChemGeneParser.parse_int_fields(r, CTDChemGeneParser.int_fields)
 
         r['geneforms'] = CTDChemGeneParser.parse_list(r['geneforms'], CTDChemGeneParser.SEPARATOR)
         r['interactionactions'] = CTDChemGeneParser.parse_list(r['interactionactions'], CTDChemGeneParser.SEPARATOR)

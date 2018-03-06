@@ -1,23 +1,22 @@
 {
-  '_id': 'entrezgene:213-mesh:C016614',
+  '_id': 'entrezgene:36-mesh:C524733',
   'ctd': [
     {
-      'tax': 'Macaca mulatta',
-      'taxid': '9544',
-      'interaction': '1-nitronaphthalene metabolite binds to ALB protein',
+      'tax': 'Mus musculus',
+      'taxid': 10090,
+      'interaction': '17-ethynyl-5-androstene-3, 7, 17-triol binds to ACADSB protein',
       'interactionactions': 'affects^binding',
-      'pubmed': 16453347,
+      'pubmed': 22384159,
       'direction': 'A->B'
     }
   ],
   'interactor_a': {
-    'symbol': 'ALB',
-    'entrezgene': '213',
+    'symbol': 'ACADSB',
+    'entrezgene': 36,
     'geneforms': 'protein'
   },
   'interactor_b': {
-    'chemicalname': '1-nitronaphthalene',
-    'mesh': 'C016614',
-    'casrn': '86-57-7'
+    'chemicalname': '17-ethynyl-5-androstene-3, 7, 17-triol',
+    'mesh': 'C524733'
   }
 }

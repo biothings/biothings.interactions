@@ -1,4 +1,12 @@
 {
+  'interactor_a': {
+    'symbol': 'AKT3',
+    'entrezgene': 10000
+  },
+  'interactor_b': {
+    'mesh': 'C0917816',
+    'diseasename': 'Mental deficiency'
+  },
   '_id': 'entrezgene:10000-mesh:C0917816',
   'disgenet': [
     {
@@ -6,13 +14,5 @@
       'source': 'HPO',
       'direction': 'A->B'
     }
-  ],
-  'interactor_a': {
-    'symbol': 'AKT3',
-    'entrezgene': '10000'
-  },
-  'interactor_b': {
-    'mesh': 'C0917816',
-    'diseasename': 'Mental deficiency'
-  }
+  ]
 }

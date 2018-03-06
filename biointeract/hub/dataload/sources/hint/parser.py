@@ -108,8 +108,8 @@ class HiNTParser(BiointeractParser):
         for e in r['pmid:method:quality'].split(HiNTParser.SEPARATOR):
             pubmed = e.split(':')
             evidence_record = {
-                'pmid': pubmed[0],
-                'method': pubmed[1],
+                'pmid': int(pubmed[0]),
+                'method': int(pubmed[1]),
                 'quality': pubmed[2]
             }
             evidence.append(evidence_record)

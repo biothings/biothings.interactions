@@ -159,7 +159,7 @@ class HiNTParser(BiointeractParser):
 
         # Query MyGene.info
         mg = biothings_client.get_client('gene')
-        qr = mg.querymany(list(uniprots), scopes='uniprot', species='human')
+        qr = mg.querymany(list(uniprots), scopes='uniprot', species='human', as_generator=True)
 
         # Build the Entrezgene dictionary to return
         entrezgenes = {}

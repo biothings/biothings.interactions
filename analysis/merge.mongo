@@ -1,0 +1,21 @@
+
+# src_build_config entry for merging BioGRID and HiNT
+db.src_build_config.insert({"_id": "test", "name": "test", "doc_type": "test_doc_type", "root": [], "sources": ["biogrid", "hint"]})
+
+# Match for biogrid
+db.test_20180307_wjcei8bl.aggregate([
+    { $match: { biogrid: { $exists: true}, hint: { $exists: true} } },
+    { $out: "bandh"}
+])
+
+# Match for hint records
+db.test_20180307_wjcei8bl.aggregate([
+    { $match: { hint: { $exists: true} } },
+    { $out: "hint"}
+])
+
+# Match for biogrid and hint records
+db.test_20180307_wjcei8bl.aggregate([
+    { $match: { biogrid: { $exists: true}, hint: { $exists: true} } },
+    { $out: "bandh"}
+])

@@ -1,0 +1,49 @@
+{
+  "_id": "entrezgene:1008-entrezgene:5764",
+  "interactor_a": {
+    "uniprot": "P21246",
+    "gene": "PTN",
+    "alias": "HGNC:9630",
+    "entrezgene": 5764
+  },
+  "interactor_b": {
+    "uniprot": "Q9Y6N8",
+    "gene": "CDH10",
+    "alias": "HGNC:1749",
+    "entrezgene": 1008
+  },
+  "biogrid": [
+    {
+      "biogrid_interaction_id": 270216,
+      "score": 2,
+      "src_db": "BIOGRID",
+      "citation": {
+        "author": "Stelzl U (2005)",
+        "pubmed": 16169070
+      },
+      "experiment": {
+        "system": "Two-hybrid",
+        "system_type": "physical",
+        "throughput": "High Throughput"
+      },
+      "direction": "A->B"
+    }
+  ],
+  "hint": [
+    {
+      "evidence": [
+        {
+          "pmid": 16169070,
+          "method": 18,
+          "quality": "HT"
+        },
+        {
+          "pmid": 16169070,
+          "method": 398,
+          "quality": "HT"
+        }
+      ]
+    }
+  ],
+  "direction": "B->A"
+}

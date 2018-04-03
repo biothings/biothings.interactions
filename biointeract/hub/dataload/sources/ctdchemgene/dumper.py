@@ -14,5 +14,8 @@ class CTDChemGeneDumper(LastModifiedHTTPDumper):
     SCHEDULE = "0 9 * * *"
 
     # Development URL - avoid hitting the CTD site repeatedly
-    SRC_URLS = ["http://biothings-data/CTD_chem_gene_ixns.tsv.gz"]
+    # SRC_URLS = ["http://biothings-data/CTD_chem_gene_ixns.tsv.gz"]
+
+    # Production URL
+    SRC_URLS = ["http://ctdbase.org/reports/CTD_chem_gene_ixns.tsv.gz"]
 

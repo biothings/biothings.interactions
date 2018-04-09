@@ -14,4 +14,8 @@ class DisGeNETDumper(LastModifiedHTTPDumper):
     SCHEDULE = "0 9 * * *"
 
     # Development URL - avoid hitting the CTD site repeatedly
-    SRC_URLS = ["http://biothings-data/curated_gene_disease_associations.tsv.gz"]
+    # SRC_URLS = ["http://biothings-data/curated_gene_disease_associations.tsv.gz"]
+
+    # Production URL
+    SRC_URLS = ["http://www.disgenet.org/ds/DisGeNET/results/curated_gene_disease_associations.tsv.gz"]
+

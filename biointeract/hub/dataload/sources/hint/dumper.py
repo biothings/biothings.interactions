@@ -14,4 +14,8 @@ class HiNTDumper(LastModifiedHTTPDumper):
     SCHEDULE = "0 9 * * *"
 
     # Development URL - avoid hitting the HiNT site repeatedly
-    SRC_URLS = ["http://biothings-data/HomoSapiens_htb_hq.txt"]
+    # SRC_URLS = ["http://biothings-data/HomoSapiens_htb_hq.txt"]
+
+    # Production URL
+    SRC_URLS = ["http://hint.yulab.org/download/HomoSapiens/binary/hq/"]
+

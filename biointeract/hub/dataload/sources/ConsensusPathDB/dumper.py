@@ -14,7 +14,8 @@ class ConsensusPathDBDumper(LastModifiedHTTPDumper):
     SCHEDULE = "0 9 * * *"
 
     # Development URL - avoid hitting the ConsensusPathDB site repeatedly
-    SRC_URLS = ["http://biothings-data/ConsensusPathDB_human_PPI.gz"]
+    # SRC_URLS = ["http://biothings-data/ConsensusPathDB_human_PPI.gz"]
 
     # Production URL
-    # SRC_URLS = ["http://cpdb.molgen.mpg.de/download/ConsensusPathDB_human_PPI.gz"]
+    SRC_URLS = ["http://cpdb.molgen.mpg.de/download/ConsensusPathDB_human_PPI.gz"]
+

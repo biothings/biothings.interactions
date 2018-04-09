@@ -14,7 +14,8 @@ class BiogridDumper(LastModifiedHTTPDumper):
     SCHEDULE = "0 9 * * *"
 
     # Development URL - avoid hitting the ConsensusPathDB site repeatedly
-    SRC_URLS = ["http://biothings-data/BIOGRID-ALL-3.4.156.tab2.zip"]
+    # SRC_URLS = ["http://biothings-data/BIOGRID-ALL-3.4.156.tab2.zip"]
 
     # Production URL
-    # SRC_URLS = ["http://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-3.4.154/BIOGRID-ALL-3.4.154.tab2.zip"]
+    SRC_URLS = ["http://downloads.thebiogrid.org/Download/BioGRID/Release-Archive/BIOGRID-3.4.156/BIOGRID-ALL-3.4.156.tab2.zip"]
+

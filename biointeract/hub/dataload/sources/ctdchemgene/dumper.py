@@ -1,7 +1,7 @@
-import os, biothings, config_hub
-biothings.config_for_app(config_hub)
+import os, biothings, config
+biothings.config_for_app(config)
 
-from config_hub import DATA_ARCHIVE_ROOT
+from config import DATA_ARCHIVE_ROOT
 from biothings.hub.dataload.dumper import LastModifiedHTTPDumper
 
 

@@ -1,8 +1,8 @@
 import os
 from zipfile import ZipFile
 
-import biothings, config_hub
-biothings.config_for_app(config_hub)
+import biothings, config
+biothings.config_for_app(config)
 
 import biothings.hub.dataload.uploader as uploader
 from .parser import HiNTParser

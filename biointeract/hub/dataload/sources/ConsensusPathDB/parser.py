@@ -70,6 +70,9 @@ class CPDParser(BiointeractParser):
         new_record['cpd'] = r
         new_record['_id'] = CPDParser.compute_id(r['interaction_participants'])
 
+        # Sweep all empty values
+        new_record = CPDParser.sweep_record(new_record)
+
         return new_record
 
     @staticmethod

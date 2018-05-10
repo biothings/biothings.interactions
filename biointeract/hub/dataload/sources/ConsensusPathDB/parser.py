@@ -5,6 +5,7 @@ a generated dictionary of values.
 Source Project:   biothings.interactions
 Author:  Greg Taylor:  greg.k.taylor@gmail.com
 """
+import hashlib
 import re
 from hub.dataload.BiointeractParser import BiointeractParser
 
@@ -63,7 +64,13 @@ class CPDParser(BiointeractParser):
         r['interaction_participants'] = CPDParser.parse_interaction_participants(r['interaction_participants'])
         r['interaction_publications'] = CPDParser.parse_interaction_publications(r['interaction_publications'])
         r['source_databases'] = CPDParser.parse_source_databases(r['source_databases'])
-        return r
+
+        # Readjust for biothings.api record format
+        new_record = dict()
+        new_record['cpd'] = r
+        new_record['_id'] = CPDParser.compute_id(r['interaction_participants'])
+
+        return new_record
 
     @staticmethod
     def parse_cpd_tsv_file(f):
@@ -89,3 +96,15 @@ class CPDParser(BiointeractParser):
                 for (pos, val) in enumerate(line.split('\t')):
                     _r[header_dict[pos]] = val
                 yield CPDParser.parse_cpd_tsv_line(_r)
+
+    @staticmethod
+    def compute_id(participate_lst):
+        """
+        Calculate an id field given a list of participants (which are gene symbols).
+        :param participate_lst:
+        :return:
+        """
+        symbols = '-'.join(participate_lst)
+        hash_object = hashlib.md5(symbols.encode('utf-8'))
+        symbol_hash = hash_object.hexdigest()
+        return 'symbol:{}'.format(symbol_hash)

@@ -12,7 +12,8 @@ class HiNTUploader(uploader.BaseSourceUploader):
 
     name = "hint"
     collection_name = "hint"
-    tab_file = "HomoSapiens_htb_hq.txt"
+    # tab_file = "HomoSapiens_htb_hq.txt"
+    tab_file = "hq"
     # __metadata__ = {"mapper": 'hint_mapper'}
 
     def load_data(self, data_folder):

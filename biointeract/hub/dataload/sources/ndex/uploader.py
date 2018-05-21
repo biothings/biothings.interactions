@@ -13,7 +13,7 @@ class nDEXUploader(uploader.BaseSourceUploader):
     # main_source = "ConsensusPathDB"
     name = "ndex"
     collection_name = "ndex"
-    file_name = "NCI Pathway Interaction Database - Final Revision.cx"
+    file_name = "09f3c90a-121a-11e6-a039-06603eb7f303"
     # __metadata__ = {"mapper": 'consensuspathdb_mapper'}
 
     def load_data(self, data_folder):

@@ -11,6 +11,7 @@ Source Project:   biothings.interactions
 Author:  Greg Taylor:  greg.k.taylor@gmail.com
 """
 import re
+from biothings.utils.dataload import dict_sweep
 
 
 class BiointeractParser(object):
@@ -130,16 +131,7 @@ class BiointeractParser(object):
         :param r:
         :return:
         """
-        r2 = {}
-        for k1 in r.keys():
-            if isinstance(r[k1], dict):
-                r2[k1] = {}
-                for k2 in r[k1]:
-                    if r[k1][k2]:
-                        r2[k1][k2] = r[k1][k2]
-            elif r[k1]:
-                r2[k1] = r[k1]
-        return r2
+        return dict_sweep(r)
 
     @staticmethod
     def collapse_duplicate_keys(result_list, db_field):

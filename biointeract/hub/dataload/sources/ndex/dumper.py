@@ -13,6 +13,5 @@ class nDEXDumper(LastModifiedHTTPDumper):
     SUFFIX_ATTR = "timestamp"
     SCHEDULE = "0 9 * * *"
 
-    # Development URL - avoid hitting the CTD site repeatedly
-    SRC_URLS = ["http://biothings-data/NCI Pathway Interaction Database - Final Revision.cx"]
-
+    # Production URL
+    SRC_URLS = ["http://public.ndexbio.org/v2/network/09f3c90a-121a-11e6-a039-06603eb7f303"]

@@ -148,11 +148,14 @@ class BiogridParser(BiointeractParser):
         :param r:
         :return:
         """
-        if 'entrezgene' in r['interactor_a'] and 'entrezgene' in r['interactor_b']:
+
+        # A redundant check for all entrezgenes - they should be present and not be None
+        if 'entrezgene' in r['interactor_a'] and r['interactor_a']['entrezgene'] \
+                and 'entrezgene' in r['interactor_b'] and r['interactor_b']['entrezgene']:
             curie_a = 'entrezgene'
-            id_a = int(r['interactor_a']['entrezgene'])
+            id_a = BiogridParser.safe_int(r['interactor_a']['entrezgene'])
             curie_b = 'entrezgene'
-            id_b = int(r['interactor_b']['entrezgene'])
+            id_b = BiogridParser.safe_int(r['interactor_b']['entrezgene'])
 
             r['interactor_a']['entrezgene'] = id_a
             r['interactor_b']['entrezgene'] = id_b

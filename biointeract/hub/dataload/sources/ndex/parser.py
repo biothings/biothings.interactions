@@ -15,10 +15,10 @@ from hub.dataload.BiointeractParser import BiointeractParser
 class nDEXParser(BiointeractParser):
 
     # nDEX Index Constants
-    NODES = 4
-    EDGES = 5
-    NODEATTRIBUTES = 7
-    EDGEATTRIBUTES = 8
+    NODES = 5
+    EDGES = 6
+    NODEATTRIBUTES = 8
+    EDGEATTRIBUTES = 9
 
     @staticmethod
     def parse_ndex_file(f):
@@ -44,27 +44,31 @@ class nDEXParser(BiointeractParser):
             edge_types.add(j[nDEXParser.EDGES]['edges'][i]['i'])
             if j[nDEXParser.EDGES]['edges'][i]['i'] == 'in-complex-with':
                 complex_count = complex_count + 1
-                interaction = {
-                    'interactor_a': {
-                        'ndex': n[j[nDEXParser.EDGES]['edges'][i]['s']]['@id']
-                    },
-                    'interactor_b': {
-                        'ndex': n[j[nDEXParser.EDGES]['edges'][i]['t']]['@id']
-                    },
-                    'ndex': {
-                        'cx_edge_id': j[nDEXParser.EDGES]['edges'][i]['@id'],
-                        'edge': j[nDEXParser.EDGES]['edges'][i],
-                        's': n[j[nDEXParser.EDGES]['edges'][i]['s']],
-                        'sa': na[j[nDEXParser.EDGES]['edges'][i]['s']],
-                        't': n[j[nDEXParser.EDGES]['edges'][i]['t']],
-                        'ta': na[j[nDEXParser.EDGES]['edges'][i]['t']],
+                try:
+                    interaction = {
+                        'interactor_a': {
+                            'ndex': n[j[nDEXParser.EDGES]['edges'][i]['s']]['@id']
+                        },
+                        'interactor_b': {
+                            'ndex': n[j[nDEXParser.EDGES]['edges'][i]['t']]['@id']
+                        },
+                        'ndex': {
+                            'cx_edge_id': j[nDEXParser.EDGES]['edges'][i]['@id'],
+                            'edge': j[nDEXParser.EDGES]['edges'][i],
+                            's': n[j[nDEXParser.EDGES]['edges'][i]['s']],
+                            'sa': na[j[nDEXParser.EDGES]['edges'][i]['s']],
+                            't': n[j[nDEXParser.EDGES]['edges'][i]['t']],
+                            'ta': na[j[nDEXParser.EDGES]['edges'][i]['t']],
+                        }
                     }
-                }
 
-                id, interaction = nDEXParser.set_id(interaction)
-                interaction['_id'] = id
+                    id, interaction = nDEXParser.set_id(interaction)
+                    interaction['_id'] = id
 
-                yield interaction
+                    yield interaction
+
+                except KeyError:
+                    pass
 
     @staticmethod
     def set_id(r):

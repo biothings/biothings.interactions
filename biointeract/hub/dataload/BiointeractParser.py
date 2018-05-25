@@ -131,7 +131,7 @@ class BiointeractParser(object):
         :param r:
         :return:
         """
-        return dict_sweep(r)
+        return dict_sweep(r, vals=[None])
 
     @staticmethod
     def collapse_duplicate_keys(result_list, db_field):
